@@ -6,6 +6,7 @@ import (
 	"github.com/buildpack/libbuildpack/buildplan"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/php-cnb/php"
+	"github.com/cloudfoundry/php-composer-cnb/composer"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -16,10 +17,7 @@ import (
 )
 
 const (
-	COMPOSER_JSON = "composer.json"
-	COMPOSER_LOCK = "composer.lock"
 	COMPOSER_PATH = "COMPOSER_PATH"
-	DEPENDENCY    = "php-composer"
 )
 
 func main() {
@@ -54,7 +52,7 @@ func runDetect(context detect.Detect) (int, error) {
 	}
 
 	return context.Pass(buildplan.BuildPlan{
-		DEPENDENCY: buildplan.Dependency{
+		composer.DEPENDENCY: buildplan.Dependency{
 			Version:  buildpackYAML.Composer.Version,
 			Metadata: buildplan.Metadata{"build": true},
 		},
@@ -66,7 +64,7 @@ func runDetect(context detect.Detect) (int, error) {
 }
 
 func findComposer(context detect.Detect) (string, error) {
-	composerJSON := filepath.Join(context.Application.Root, COMPOSER_JSON)
+	composerJSON := filepath.Join(context.Application.Root, composer.COMPOSER_JSON)
 
 	if exists, err := helper.FileExists(composerJSON); err != nil {
 		return "", fmt.Errorf("error checking filepath: %s", composerJSON)
@@ -74,26 +72,31 @@ func findComposer(context detect.Detect) (string, error) {
 		return composerJSON, nil
 	}
 
-	buildpackYAML, err := phpweb.LoadBuildpackYAML(context.Application.Root)
+	phpBuildpackYAML, err := phpweb.LoadBuildpackYAML(context.Application.Root)
 	if err != nil {
 		return "", err
 	}
 
-	composerPath := os.Getenv(COMPOSER_PATH)
-	composerJSON = filepath.Join(context.Application.Root, buildpackYAML.Config.WebDirectory, composerPath, COMPOSER_JSON)
+	composerBuildpackYAML, err := loadComposerBuildpackYAML(context.Application.Root)
+	if err != nil {
+		return "", err
+	}
+
+	composerJSON = filepath.Join(context.Application.Root, phpBuildpackYAML.Config.WebDirectory, composerBuildpackYAML.Composer.JsonPath, composer.COMPOSER_JSON)
 	if exists, err := helper.FileExists(composerJSON); err != nil {
 		return "", fmt.Errorf("error checking filepath: %s", composerJSON)
 	} else if exists {
 		return composerJSON, nil
 	}
 
-	return "", fmt.Errorf(`no "%s" found at: %s`, COMPOSER_JSON, composerJSON)
+	return "", fmt.Errorf(`no "%s" found at: %s`, composer.COMPOSER_JSON, composerJSON)
 }
 
 type ComposerConfig struct {
-	Version string
-	InstallOptions string
-	VendorDirectory string
+	Version         string `yaml:"version"`
+	InstallOptions  string `yaml:"install_options"`
+	VendorDirectory string `yaml:"vendor_directory"`
+	JsonPath        string `yaml:"json_path"`
 }
 
 type BuildpackYAML struct {
@@ -101,31 +104,31 @@ type BuildpackYAML struct {
 }
 
 func loadComposerBuildpackYAML(appRoot string) (BuildpackYAML, error) {
-		buildpackYAML, configFile := BuildpackYAML{}, filepath.Join(appRoot, "buildpack.yml")
-		if exists, err := helper.FileExists(configFile); err != nil {
+	buildpackYAML, configFile := BuildpackYAML{}, filepath.Join(appRoot, "buildpack.yml")
+	if exists, err := helper.FileExists(configFile); err != nil {
+		return BuildpackYAML{}, err
+	} else if exists {
+		file, err := os.Open(configFile)
+		if err != nil {
 			return BuildpackYAML{}, err
-		} else if exists {
-			file, err := os.Open(configFile)
-			if err != nil {
-				return BuildpackYAML{}, err
-			}
-			defer file.Close()
-
-			contents, err := ioutil.ReadAll(file)
-			if err != nil {
-				return BuildpackYAML{}, err
-			}
-
-			err = yaml.Unmarshal(contents, &buildpackYAML)
-			if err != nil {
-				return BuildpackYAML{}, err
-			}
 		}
-		return buildpackYAML, nil
+		defer file.Close()
+
+		contents, err := ioutil.ReadAll(file)
+		if err != nil {
+			return BuildpackYAML{}, err
+		}
+
+		err = yaml.Unmarshal(contents, &buildpackYAML)
+		if err != nil {
+			return BuildpackYAML{}, err
+		}
+	}
+	return buildpackYAML, nil
 }
 
 func findPHPVersion(path string) (string, error) {
-	composerLockPath := filepath.Join(filepath.Dir(path), COMPOSER_LOCK)
+	composerLockPath := filepath.Join(filepath.Dir(path), composer.COMPOSER_LOCK)
 
 	if version, err := parseComposerLock(composerLockPath); err == nil && version != "" {
 		return version, nil
