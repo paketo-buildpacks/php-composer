@@ -1,61 +1,62 @@
-package composer
+package composer_test
 
 import (
+	"github.com/sclevine/spec/report"
+	"path/filepath"
+	"testing"
+
+	"github.com/buildpack/libbuildpack/buildplan"
 	"github.com/cloudfoundry/libcfbuildpack/test"
+	"github.com/cloudfoundry/php-composer-cnb/composer"
 	. "github.com/onsi/gomega"
 	"github.com/sclevine/spec"
-	"github.com/sclevine/spec/report"
-	"testing"
 )
 
-type FakeRunner struct {
-	arguments []string
-	cwd string
-	err       error
-}
-
-func (f *FakeRunner) Run(bin, dir string, args ...string) error {
-	f.arguments = append([]string{ bin}, args...)
-	f.cwd = dir
-	return f.err
-}
-
 func TestUnitComposer(t *testing.T) {
-	spec.Run(t, "Modules", testComposer, spec.Report(report.Terminal{}))
+	spec.Run(t, "Composer", testContributor, spec.Report(report.Terminal{}))
 }
 
-func testComposer(t *testing.T, when spec.G, it spec.S) {
-	when("we are running composer", func() {
-		var factory *test.BuildFactory
-		var fakeRunner *FakeRunner
-		var composer Composer
+func testContributor(t *testing.T, when spec.G, it spec.S) {
+	it.Before(func() {
+		RegisterTestingT(t)
+	})
 
-		it.Before(func() {
-			RegisterTestingT(t)
-			factory = test.NewBuildFactory(t)
-			fakeRunner = &FakeRunner{}
-			composer = NewComposer(factory.Build.Application.Root)
-			composer.Runner = fakeRunner
+	when("NewContributor", func() {
+		var stubComposerFixture = filepath.Join("testdata", "stub-composer.tar.gz")
+
+		it("returns true if a build plan exists", func() {
+			f := test.NewBuildFactory(t)
+			f.AddBuildPlan(composer.Dependency, buildplan.Dependency{})
+			f.AddDependency(composer.Dependency, stubComposerFixture)
+
+			_, willContribute, err := composer.NewContributor(f.Build)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(willContribute).To(BeTrue())
 		})
 
-		it("should run composer -V", func(){
-			Expect(composer.Version()).To(Succeed())
-			Expect(fakeRunner.arguments).To(ConsistOf("php", COMPOSER_PHAR, "-V"))
+		it("returns false if a build plan does not exist", func() {
+			f := test.NewBuildFactory(t)
+
+			_, willContribute, err := composer.NewContributor(f.Build)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(willContribute).To(BeFalse())
 		})
 
-		it("should run composer install", func(){
-			Expect(composer.Install("--foo", "--bar")).To(Succeed())
-			Expect(fakeRunner.arguments).To(ConsistOf("php", COMPOSER_PHAR, "install", "--no-progress", "--foo", "--bar"))
-		})
+		it("contributes composer to the build layer when included in the build plan", func() {
+			f := test.NewBuildFactory(t)
+			f.AddBuildPlan(composer.Dependency, buildplan.Dependency{
+				Metadata: buildplan.Metadata{"build": true},
+			})
+			f.AddDependency(composer.Dependency, stubComposerFixture)
 
-		it("should run composer global", func(){
-			Expect(composer.Global("--foo", "--bar")).To(Succeed())
-			Expect(fakeRunner.arguments).To(ConsistOf("php", COMPOSER_PHAR, "global", "require", "--no-progress", "--foo", "--bar"))
-		})
+			composerDep, _, err := composer.NewContributor(f.Build)
+			Expect(err).NotTo(HaveOccurred())
 
-		it("should run config", func(){
-			Expect(composer.Config("sec ret")).To(Succeed())
-			Expect(fakeRunner.arguments).To(ConsistOf("php", COMPOSER_PHAR, "config", "-g", "github-oauth.github.com", `"sec ret"`))
+			Expect(composerDep.Contribute()).To(Succeed())
+
+			layer := f.Build.Layers.Layer(composer.Dependency)
+			Expect(layer).To(test.HaveLayerMetadata(true, false, false))
+			Expect(filepath.Join(layer.Root, "stub.txt")).To(BeARegularFile())
 		})
 	})
 }

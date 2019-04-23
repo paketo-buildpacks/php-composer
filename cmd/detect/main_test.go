@@ -1,15 +1,18 @@
 package main
 
 import (
+	"bytes"
 	"github.com/buildpack/libbuildpack/buildplan"
+	"github.com/cloudfoundry/libcfbuildpack/logger"
 	"github.com/cloudfoundry/php-cnb/php"
-	"github.com/cloudfoundry/php-composer-cnb/composer"
 	"path/filepath"
 	"testing"
 
 	"github.com/cloudfoundry/libcfbuildpack/detect"
 	"github.com/cloudfoundry/libcfbuildpack/test"
 
+	bplogger "github.com/buildpack/libbuildpack/logger"
+	"github.com/cloudfoundry/php-composer-cnb/composer"
 	. "github.com/onsi/gomega"
 	"github.com/sclevine/spec"
 	"github.com/sclevine/spec/report"
@@ -27,73 +30,18 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 		factory = test.NewDetectFactory(t)
 	})
 
-	when("there is a composer.json in the app root", func() {
-		var compsoserPath string
-		it.Before(func() {
-			compsoserPath = filepath.Join(factory.Detect.Application.Root, composer.COMPOSER_JSON)
-			test.WriteFile(t, compsoserPath, "")
-		})
-
-		it("should find the composer.json file", func() {
-			path, err := findComposer(factory.Detect)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(path).To(Equal(compsoserPath))
-		})
-	})
-
-	when("there no composer.json file", func() {
-		it("should return an error", func() {
-			path, err := findComposer(factory.Detect)
-			Expect(path).To(BeEmpty())
-			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(ContainSubstring("no \"" + composer.COMPOSER_JSON + "\" found"))
-		})
-	})
-
-	when("there is a composer.json in the web directory", func() {
-		var compsoserPath string
-		it.Before(func() {
-			test.WriteFile(t, filepath.Join(factory.Detect.Application.Root, "buildpack.yml"), `{"php": {"webdirectory": "public"}}`)
-			compsoserPath = filepath.Join(factory.Detect.Application.Root, "public", composer.COMPOSER_JSON)
-			test.WriteFile(t, compsoserPath, "")
-		})
-
-		it("should find the composer.json file", func() {
-			path, err := findComposer(factory.Detect)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(path).To(Equal(compsoserPath))
-		})
-	})
-
-	when("there is a composer.json location specified in buildpack.yml", func() {
-		var compsoserPath string
-		var subDir string
-		it.Before(func() {
-			subDir = "subdir"
-			test.WriteFile(t, filepath.Join(factory.Detect.Application.Root, "buildpack.yml"), `{"php": {"webdirectory": "public"}, "composer": {"json_path": "subdir"}}`)
-			compsoserPath = filepath.Join(factory.Detect.Application.Root, "public", subDir, composer.COMPOSER_JSON)
-			test.WriteFile(t, compsoserPath, "")
-		})
-
-		it("should find the composer.json file", func() {
-			path, err := findComposer(factory.Detect)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(path).To(Equal(compsoserPath))
-		})
-	})
-
 	when("there is a composer.json with a php version", func() {
 		var compsoserPath string
 		var phpVersion string
 		it.Before(func() {
 			phpVersion = ">=5.6"
 			composerJSONString := `{"require": {"php": "` + phpVersion + `"}}`
-			compsoserPath = filepath.Join(factory.Detect.Application.Root, composer.COMPOSER_JSON)
+			compsoserPath = filepath.Join(factory.Detect.Application.Root, composer.ComposerJSON)
 			test.WriteFile(t, compsoserPath, composerJSONString)
 		})
 
 		it("should parse the correct version", func() {
-			version, err := findPHPVersion(compsoserPath)
+			version, err := findPHPVersion(compsoserPath, factory.Detect.Logger)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(version).To(Equal(phpVersion))
 		})
@@ -110,32 +58,58 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 		it.Before(func() {
 			phpVersion = ">=5.6"
 			composerJSONString := `{"require": {"php": "` + phpVersion + `"}}`
-			compsoserPath = filepath.Join(factory.Detect.Application.Root, composer.COMPOSER_JSON)
+			compsoserPath = filepath.Join(factory.Detect.Application.Root, composer.ComposerJSON)
 			test.WriteFile(t, compsoserPath, composerJSONString)
 
 			phpLockVersion = ">=7.0"
 			composerLockString := `{"platform": {"php": "` + phpLockVersion + `"}}`
-			composerLockPath = filepath.Join(factory.Detect.Application.Root, composer.COMPOSER_LOCK)
+			composerLockPath = filepath.Join(factory.Detect.Application.Root, composer.ComposerLock)
 			test.WriteFile(t, composerLockPath, composerLockString)
 		})
 
 		it("should parse the version from composer.lock", func() {
-			version, err := findPHPVersion(compsoserPath)
+			version, err := findPHPVersion(compsoserPath, factory.Detect.Logger)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(version).To(Equal(phpLockVersion))
 		})
 	})
 
-	when("there is a composer.json", func() {
+	when("there is a composer.json but not a composer.lock", func() {
+		var (
+			compsoserPath string
+			phpVersion    string
+		)
+
+		it.Before(func() {
+			phpVersion = ">=5.6"
+			composerJSONString := `{"require": {"php": "` + phpVersion + `"}}`
+			compsoserPath = filepath.Join(factory.Detect.Application.Root, composer.ComposerJSON)
+			test.WriteFile(t, compsoserPath, composerJSONString)
+		})
+
+		it("should parse the version from composer.json", func() {
+			debug := &bytes.Buffer{}
+			info := &bytes.Buffer{}
+
+			log := logger.Logger{Logger: bplogger.NewLogger(debug, info)}
+
+			version, err := findPHPVersion(compsoserPath, log)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(version).To(Equal(phpVersion))
+			Expect(info.String()).To(Equal("WARNING: Include a 'composer.lock' file with your application! This will make sure the exact same version of dependencies are used when you deploy to CloudFoundry. It will also enable caching of your dependency layer.\n"))
+		})
+	})
+
+	when("composer is being used", func() {
 		const VERSION string = "1.2.3"
 		var compsoserPath string
 
 		it.Before(func() {
 			composerJSONString := `{"require": {"php": "` + VERSION + `"}}`
 
-			compsoserPath = filepath.Join(factory.Detect.Application.Root, composer.COMPOSER_JSON)
+			compsoserPath = filepath.Join(factory.Detect.Application.Root, composer.ComposerJSON)
 			test.WriteFile(t, compsoserPath, composerJSONString)
-			factory.AddBuildPlan(composer.DEPENDENCY, buildplan.Dependency{})
+			factory.AddBuildPlan(composer.Dependency, buildplan.Dependency{})
 			fakeVersion := "php.default.VERSION"
 			factory.Detect.Buildpack.Metadata = map[string]interface{}{"default_version": fakeVersion}
 		})
@@ -147,7 +121,7 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 				Expect(code).To(Equal(detect.PassStatusCode))
 
 				Expect(factory.Output).To(Equal(buildplan.BuildPlan{
-					composer.DEPENDENCY: buildplan.Dependency{
+					composer.Dependency: buildplan.Dependency{
 						Metadata: buildplan.Metadata{"build": true},
 					},
 					php.Dependency: buildplan.Dependency{
@@ -167,8 +141,8 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 				Expect(code).To(Equal(detect.PassStatusCode))
 
 				Expect(factory.Output).To(Equal(buildplan.BuildPlan{
-					composer.DEPENDENCY: buildplan.Dependency{
-						Version: "1.2.3",
+					composer.Dependency: buildplan.Dependency{
+						Version:  "1.2.3",
 						Metadata: buildplan.Metadata{"build": true},
 					},
 					php.Dependency: buildplan.Dependency{

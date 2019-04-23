@@ -5,19 +5,14 @@ import (
 	"fmt"
 	"github.com/buildpack/libbuildpack/buildplan"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
+	"github.com/cloudfoundry/libcfbuildpack/logger"
 	"github.com/cloudfoundry/php-cnb/php"
-	"github.com/cloudfoundry/php-composer-cnb/composer"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/cloudfoundry/libcfbuildpack/detect"
-	"github.com/cloudfoundry/php-web-cnb/phpweb"
-)
-
-const (
-	COMPOSER_PATH = "COMPOSER_PATH"
+	"github.com/cloudfoundry/php-composer-cnb/composer"
 )
 
 func main() {
@@ -36,23 +31,23 @@ func main() {
 }
 
 func runDetect(context detect.Detect) (int, error) {
-	path, err := findComposer(context)
+	buildpackYAML, err := composer.LoadComposerBuildpackYAML(context.Application.Root)
 	if err != nil {
 		return context.Fail(), err
 	}
 
-	phpVersion, err := findPHPVersion(path)
+	path, err := composer.FindComposer(context.Application.Root, buildpackYAML.Composer.JsonPath)
 	if err != nil {
 		return context.Fail(), err
 	}
 
-	buildpackYAML, err := loadComposerBuildpackYAML(context.Application.Root)
+	phpVersion, err := findPHPVersion(path, context.Logger)
 	if err != nil {
 		return context.Fail(), err
 	}
 
 	return context.Pass(buildplan.BuildPlan{
-		composer.DEPENDENCY: buildplan.Dependency{
+		composer.Dependency: buildplan.Dependency{
 			Version:  buildpackYAML.Composer.Version,
 			Metadata: buildplan.Metadata{"build": true},
 		},
@@ -63,76 +58,19 @@ func runDetect(context detect.Detect) (int, error) {
 	})
 }
 
-func findComposer(context detect.Detect) (string, error) {
-	composerJSON := filepath.Join(context.Application.Root, composer.COMPOSER_JSON)
+func findPHPVersion(path string, logger logger.Logger) (string, error) {
+	composerLockPath := filepath.Join(filepath.Dir(path), composer.ComposerLock)
 
-	if exists, err := helper.FileExists(composerJSON); err != nil {
-		return "", fmt.Errorf("error checking filepath: %s", composerJSON)
-	} else if exists {
-		return composerJSON, nil
-	}
-
-	phpBuildpackYAML, err := phpweb.LoadBuildpackYAML(context.Application.Root)
+	composerLockExists, err := helper.FileExists(composerLockPath)
 	if err != nil {
 		return "", err
 	}
 
-	composerBuildpackYAML, err := loadComposerBuildpackYAML(context.Application.Root)
-	if err != nil {
-		return "", err
+	if composerLockExists {
+		return parseComposerLock(composerLockPath)
 	}
 
-	composerJSON = filepath.Join(context.Application.Root, phpBuildpackYAML.Config.WebDirectory, composerBuildpackYAML.Composer.JsonPath, composer.COMPOSER_JSON)
-	if exists, err := helper.FileExists(composerJSON); err != nil {
-		return "", fmt.Errorf("error checking filepath: %s", composerJSON)
-	} else if exists {
-		return composerJSON, nil
-	}
-
-	return "", fmt.Errorf(`no "%s" found at: %s`, composer.COMPOSER_JSON, composerJSON)
-}
-
-type ComposerConfig struct {
-	Version         string `yaml:"version"`
-	InstallOptions  string `yaml:"install_options"`
-	VendorDirectory string `yaml:"vendor_directory"`
-	JsonPath        string `yaml:"json_path"`
-}
-
-type BuildpackYAML struct {
-	Composer ComposerConfig `yaml:"composer"`
-}
-
-func loadComposerBuildpackYAML(appRoot string) (BuildpackYAML, error) {
-	buildpackYAML, configFile := BuildpackYAML{}, filepath.Join(appRoot, "buildpack.yml")
-	if exists, err := helper.FileExists(configFile); err != nil {
-		return BuildpackYAML{}, err
-	} else if exists {
-		file, err := os.Open(configFile)
-		if err != nil {
-			return BuildpackYAML{}, err
-		}
-		defer file.Close()
-
-		contents, err := ioutil.ReadAll(file)
-		if err != nil {
-			return BuildpackYAML{}, err
-		}
-
-		err = yaml.Unmarshal(contents, &buildpackYAML)
-		if err != nil {
-			return BuildpackYAML{}, err
-		}
-	}
-	return buildpackYAML, nil
-}
-
-func findPHPVersion(path string) (string, error) {
-	composerLockPath := filepath.Join(filepath.Dir(path), composer.COMPOSER_LOCK)
-
-	if version, err := parseComposerLock(composerLockPath); err == nil && version != "" {
-		return version, nil
-	}
+	logger.Info("WARNING: Include a 'composer.lock' file with your application! This will make sure the exact same version of dependencies are used when you deploy to CloudFoundry. It will also enable caching of your dependency layer.")
 
 	return parseComposerJSON(path)
 }
