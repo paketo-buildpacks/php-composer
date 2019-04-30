@@ -1,7 +1,6 @@
 package runner
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -12,17 +11,11 @@ type Runner interface {
 }
 
 type ComposerRunner struct {
-	Env map[string]string
 	Out io.Writer
 	Err io.Writer
 }
 
 func (r ComposerRunner) Run(bin, dir string, args ...string) error {
-	env := []string{}
-	for k, v := range r.Env {
-		env = append(env, fmt.Sprintf("%s=%s", k, v))
-	}
-
 	var cmd *exec.Cmd
 	if len(args) > 0 {
 		cmd = exec.Command(bin, args...)
@@ -30,7 +23,6 @@ func (r ComposerRunner) Run(bin, dir string, args ...string) error {
 		cmd = exec.Command(bin)
 	}
 
-	cmd.Env = env
 	cmd.Dir = dir
 
 	if r.Out != nil {
@@ -46,4 +38,16 @@ func (r ComposerRunner) Run(bin, dir string, args ...string) error {
 	}
 
 	return cmd.Run()
+}
+
+type FakeRunner struct {
+	Arguments []string
+	Cwd       string
+	Err       error
+}
+
+func (f *FakeRunner) Run(bin, dir string, args ...string) error {
+	f.Arguments = append([]string{bin}, args...)
+	f.Cwd = dir
+	return f.Err
 }

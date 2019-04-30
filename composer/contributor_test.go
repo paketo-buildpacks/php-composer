@@ -56,7 +56,7 @@ func testContributor(t *testing.T, when spec.G, it spec.S) {
 
 			layer := f.Build.Layers.Layer(composer.Dependency)
 			Expect(layer).To(test.HaveLayerMetadata(true, false, false))
-			Expect(filepath.Join(layer.Root, "stub.txt")).To(BeARegularFile())
+			Expect(filepath.Join(layer.Root, composer.ComposerPHAR)).To(BeARegularFile())
 		})
 	})
 }

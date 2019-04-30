@@ -4,6 +4,9 @@ import (
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 type Contributor struct {
@@ -39,7 +42,22 @@ func NewContributor(builder build.Build) (Contributor, bool, error) {
 func (n Contributor) Contribute() error {
 	return n.ComposerLayer.Contribute(func(artifact string, layer layers.DependencyLayer) error {
 		layer.Logger.SubsequentLine("Expanding to %s", layer.Root)
-		return helper.ExtractTarGz(artifact, layer.Root, 1)
+
+		err := helper.CopyFile(artifact, filepath.Join(layer.Root, ComposerPHAR))
+		if err != nil {
+			return err
+		}
+
+		// add to current path so it's accessible by the rest of this buildpack
+		layer.Logger.Info("PATH Before: %s", os.Getenv("PATH"))
+		newPath := strings.Join([]string{ os.Getenv("PATH"), filepath.Join(layer.Root, "bin")}, string(os.PathListSeparator))
+		err = os.Setenv("PATH", newPath)
+		if err != nil {
+			return err
+		}
+		/layers/org.cloudfound..../bin/phph
+		layer.Logger.Info("PATH After: %s", os.Getenv("PATH"))
+		return nil
 	}, n.flags()...)
 }
 

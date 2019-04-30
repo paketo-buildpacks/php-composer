@@ -7,7 +7,7 @@ cd "$( dirname "${BASH_SOURCE[0]}" )/.."
 
 echo "Target OS is $TARGET_OS"
 echo -n "Creating buildpack directory..."
-bp_dir=/tmp/"${PWD##*/}"_$(openssl rand -hex 12)
+bp_dir="${PWD##*/}"_$(openssl rand -hex 12)
 mkdir $bp_dir
 echo "done"
 
@@ -19,10 +19,17 @@ if [ "${BP_REWRITE_HOST:-}" != "" ]; then
     sed -i -e "s|^uri = \"https:\/\/buildpacks\.cloudfoundry\.org\(.*\)\"$|uri = \"http://$BP_REWRITE_HOST\1\"|g" "$bp_dir/buildpack.toml"
 fi
 
-# TODO: Update list of built binaries as they are written
-for b in detect build; do
+for b in $(ls cmd); do
     echo -n "Building $b..."
     GOOS=$TARGET_OS go build -o $bp_dir/bin/$b ./cmd/$b
     echo "done"
 done
-echo "Buildpack packaged into: $bp_dir"
+
+fullPath=$(realpath "$bp_dir")
+echo "Buildpack packaged into: $fullPath"
+
+buildpack_name="$(basename `pwd`)"
+
+pushd $bp_dir
+    tar czvf "../$buildpack_name.tgz" *
+popd

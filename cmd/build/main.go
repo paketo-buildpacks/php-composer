@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/cloudfoundry/php-composer-cnb/composer"
+	"github.com/cloudfoundry/php-composer-cnb/packages"
 	"os"
 
 	"github.com/buildpack/libbuildpack/buildplan"
@@ -26,21 +28,32 @@ func main() {
 func runBuild(context build.Build) (int, error) {
 	context.Logger.FirstLine(context.Logger.PrettyIdentity(context.Buildpack))
 
-	//packageManager := npm.NPM{
-	//	Runner: utils.CommandRunner{},
-	//	Logger: context.Logger,
-	//}
-	//
-	//contributor, willContribute, err := modules.NewContributor(context, packageManager)
-	//if err != nil {
-	//	return context.Failure(102), err
-	//}
-	//
-	//if willContribute {
-	//	if err := contributor.Contribute(); err != nil {
-	//		return context.Failure(103), err
-	//	}
-	//}
+	composerContributor, willContributeComposer, err := composer.NewContributor(context)
+	if err != nil {
+		return context.Failure(102), err
+	}
+
+	if willContributeComposer {
+		err := composerContributor.Contribute()
+		if err != nil {
+			return context.Failure(103), err
+		}
+
+		packageContributor, willContributePackages, err := packages.NewContributor(context, composerContributor.ComposerLayer.Root)
+		if err != nil {
+			return context.Failure(104), err
+		}
+
+		if ! willContributePackages {
+			// should always run if composer is being installed
+			return context.Failure(105), err
+		}
+
+		err = packageContributor.Contribute()
+		if err != nil {
+			return context.Failure(106), err
+		}
+	}
 
 	return context.Success(buildplan.BuildPlan{})
 }

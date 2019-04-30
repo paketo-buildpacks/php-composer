@@ -17,36 +17,44 @@ const (
 	ComposerLock    = "composer.lock"
 	ComposerJSON    = "composer.json"
 	ComposerPHAR    = "composer.phar"
+	GithubOAUTHKey  = "github-oauth.github.com"
 )
 
 type Composer struct {
-	Runner  runner.Runner
-	appRoot string
+	Runner     runner.Runner
+	workingDir string
+	pharPath   string
 }
 
-func NewComposer(appRoot string, env map[string]string) Composer {
+func NewComposer(composerJsonPath, composerPharPath string) Composer {
 	return Composer{
-		Runner: runner.ComposerRunner{Env: env},
-		appRoot: appRoot,
+		Runner:     runner.ComposerRunner{},
+		workingDir: composerJsonPath,
+		pharPath:   filepath.Join(composerPharPath, ComposerPHAR),
 	}
 }
 
 func (c Composer) Install(args ...string) error {
-	args = append([]string{ComposerPHAR, "install", "--no-progress"}, args...)
-	return c.Runner.Run("php", c.appRoot, args...)
+	args = append([]string{c.pharPath, "install", "--no-progress"}, args...)
+	return c.Runner.Run("php", c.workingDir, args...)
 }
 
 func (c Composer) Version() error {
-	return c.Runner.Run("php", c.appRoot, ComposerPHAR, "-V")
+	return c.Runner.Run("php", c.workingDir, c.pharPath, "-V")
 }
 
 func (c Composer) Global(args ...string) error {
-	args = append([]string{ComposerPHAR, "global", "require", "--no-progress"}, args...)
-	return c.Runner.Run("php", c.appRoot, args...)
+	args = append([]string{c.pharPath, "global", "require", "--no-progress"}, args...)
+	return c.Runner.Run("php", c.workingDir, args...)
 }
 
-func (c Composer) Config(token string) error {
-	return c.Runner.Run("php", c.appRoot, ComposerPHAR, "config", "-g", "github-oauth.github.com", fmt.Sprintf(`"%s"`, token))
+func (c Composer) Config(key, value string, global bool) error {
+	args := []string{c.pharPath, "config"}
+	if global {
+		args = append(args, "-g")
+	}
+	args = append(args, key, fmt.Sprintf(`"%s"`, value))
+	return c.Runner.Run("php", c.workingDir, args...)
 }
 
 // FindComposer locates the composer JSON and composer lock files
@@ -75,10 +83,11 @@ func FindComposer(appRoot string, composerJSONPath string) (string, error) {
 }
 
 type ComposerConfig struct {
-	Version         string `yaml:"version"`
-	InstallOptions  string `yaml:"install_options"`
-	VendorDirectory string `yaml:"vendor_directory"`
-	JsonPath        string `yaml:"json_path"`
+	Version          string   `yaml:"version"`
+	InstallOptions   []string `yaml:"install_options"`
+	VendorDirectory  string   `yaml:"vendor_directory"`
+	JsonPath         string   `yaml:"json_path"`
+	GitHubOAUTHToken string   `yaml:"github_oauth_token"`
 }
 
 type BuildpackYAML struct {

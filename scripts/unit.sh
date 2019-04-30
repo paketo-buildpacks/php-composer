@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 cd "$( dirname "${BASH_SOURCE[0]}" )/.."
 
 echo "Run Buildpack Unit Tests"
-
-set +e
-go test ./... -v -run Unit
+go test -mod=vendor ./... -v -run Unit
 exit_code=$?
 
 if [ "$exit_code" != "0" ]; then
