@@ -55,7 +55,7 @@ func (n Contributor) Contribute() error {
 		if err != nil {
 			return err
 		}
-		/layers/org.cloudfound..../bin/phph
+
 		layer.Logger.Info("PATH After: %s", os.Getenv("PATH"))
 		return nil
 	}, n.flags()...)

@@ -6,7 +6,12 @@ import (
 )
 
 func PreparePhpApp (appName string) (*dagger.App, error) {
-	composerBp, err := dagger.PackageBuildpack()
+	bpRoot, err := dagger.FindBPRoot()
+	if err != nil {
+		return &dagger.App{}, err
+	}
+
+	composerBp, err := dagger.PackageBuildpack(bpRoot)
 	if err != nil {
 		return &dagger.App{}, err
 	}
