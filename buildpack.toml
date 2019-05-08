@@ -1,8 +1,11 @@
-
 [buildpack]
-id = "org.cloudfoundry.buildpacks.php-composer"
+id = "org.cloudfoundry.php-composer"
 name = "PHP Composer Buildpack"
 version = "0.0.1"
+
+[metadata]
+include_files = ["bin/build","bin/detect","buildpack.toml"]
+pre_package = "./scripts/build.sh"
 
 [[stacks]]
 id = "org.cloudfoundry.stacks.cflinuxfs3"

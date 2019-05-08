@@ -34,12 +34,15 @@ func TestIntegrationComposerApp(t *testing.T) {
 }
 
 func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
-	var app *dagger.App
+	var (
+		app *dagger.App
+		Expect func(interface{}, ...interface{}) Assertion
+	)
 
 	it.Before(func() {
 		var err error
+		Expect = NewWithT(t).Expect
 
-		RegisterTestingT(t)
 		app, err = PreparePhpApp("composer_app")
 		Expect(err).ToNot(HaveOccurred())
 	})
