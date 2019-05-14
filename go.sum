@@ -24,6 +24,8 @@ github.com/cloudfoundry/php-cnb v0.0.2 h1:9K+mqBT0f+yxKac0bfj/okD3H2R6dbFG269c0j
 github.com/cloudfoundry/php-cnb v0.0.2/go.mod h1:wmL8/TWUhD4B6ssS3Lh+JuQLCNtqFxXC78cNF7T0Zuo=
 github.com/cloudfoundry/php-web-cnb v0.0.3 h1:G0RwgvZr1QJh71WhB/OnrAE+Kopne/keQZlT85ovI3o=
 github.com/cloudfoundry/php-web-cnb v0.0.3/go.mod h1:sPpyGTr9YPuTyJKIO59rby7cei4iGnknJhXHH/HIjAs=
+github.com/cloudfoundry/php-web-cnb v0.0.4-0.20190514160718-5dd42f60c05c h1:8QMGV0Vjw37dQXb6BYKglMJ8sjnz6pS563TOF/YUb74=
+github.com/cloudfoundry/php-web-cnb v0.0.4-0.20190514160718-5dd42f60c05c/go.mod h1:2ItJ7AbCkPG7pnJpmIf4ho8iWUDsOPVzDDW176kzCwM=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=

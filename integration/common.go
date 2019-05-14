@@ -21,7 +21,12 @@ func PreparePhpApp (appName string) (*dagger.App, error) {
 		return &dagger.App{}, err
 	}
 
-	phpWebBp, err := dagger.GetLatestBuildpack("php-web-cnb")
+	// phpWebBp, err := dagger.GetLatestBuildpack("php-web-cnb")
+	// if err != nil {
+	// 	return &dagger.App{}, err
+	// }
+	// temporary - REMOVE
+	phpWebBp, err := dagger.PackageBuildpack("/Users/pivotal/workspace/php-web-cnb")
 	if err != nil {
 		return &dagger.App{}, err
 	}
