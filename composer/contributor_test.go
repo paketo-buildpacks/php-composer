@@ -56,7 +56,7 @@ func testContributor(t *testing.T, when spec.G, it spec.S) {
 			test.TouchFile(
 				t,
 				f.Build.Layers.Layer(php.Dependency).Root,
-				"php/lib/php/extensions/no-debug-non-zts-"+version,
+				"lib/php/extensions/no-debug-non-zts-"+version,
 			)
 
 			composerDep, _, err := composer.NewContributor(f.Build)

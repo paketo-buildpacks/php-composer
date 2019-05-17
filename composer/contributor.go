@@ -1,13 +1,16 @@
 package composer
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
 	"github.com/cloudfoundry/php-cnb/php"
 	"github.com/cloudfoundry/php-web-cnb/config"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -79,7 +82,24 @@ func (n Contributor) flags() []layers.Flag {
 }
 
 func (n Contributor) writePhpIni() error {
-	folders, err := filepath.Glob(filepath.Join(n.PhpLayer.Root, "php/lib/php/extensions/no-debug-non-zts*"))
+	// Get path to where PHP is installed
+	stdout := bytes.Buffer{}
+	stderr := bytes.Buffer{}
+	cmd := exec.Command("whereis", "php")
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println("error:", err, "stdout:", stdout.String(), "stderr:", stderr.String())
+		return err
+	}
+	fmt.Println("output of wheris:", stdout.String())
+	phpHome := filepath.Dir(filepath.Dir(stdout.String()))
+
+	// find PHP extensions
+	root, err := filepath.Glob(phpHome+"*")
+	fmt.Println(">>>>>>>>>>>>>>>>>>>>>>> Root:", phpHome, "$$$$$$$$$$$$$$$$$$$ Contents:", root)
+	folders, err := filepath.Glob(filepath.Join(phpHome, "lib/php/extensions/no-debug-non-zts*"))
 
 	if err != nil {
 		return err
