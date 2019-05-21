@@ -1,16 +1,12 @@
 package composer
 
 import (
-	"bytes"
-	"errors"
-	"fmt"
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
 	"github.com/cloudfoundry/php-cnb/php"
 	"github.com/cloudfoundry/php-web-cnb/config"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -66,7 +62,6 @@ func (n Contributor) Contribute() error {
 		}
 
 		// generate temp php.ini for use by Composer during this buildpack
-
 		return n.writePhpIni()
 	}, n.flags()...)
 }
@@ -82,39 +77,9 @@ func (n Contributor) flags() []layers.Flag {
 }
 
 func (n Contributor) writePhpIni() error {
-	// Get path to where PHP is installed
-	stdout := bytes.Buffer{}
-	stderr := bytes.Buffer{}
-	cmd := exec.Command("whereis", "php")
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println("error:", err, "stdout:", stdout.String(), "stderr:", stderr.String())
-		return err
-	}
-	fmt.Println("output of wheris:", stdout.String())
-	phpHome := filepath.Dir(filepath.Dir(stdout.String()))
-
-	// find PHP extensions
-	root, err := filepath.Glob(phpHome+"*")
-	fmt.Println(">>>>>>>>>>>>>>>>>>>>>>> Root:", phpHome, "$$$$$$$$$$$$$$$$$$$ Contents:", root)
-	folders, err := filepath.Glob(filepath.Join(phpHome, "lib/php/extensions/no-debug-non-zts*"))
-
-	if err != nil {
-		return err
-	}
-
-	if len(folders) == 0 {
-		return errors.New("php extensions folder not found")
-	}
-
-	extensionFolder := strings.Split(folders[0], "-")
-	apiVersion := extensionFolder[len(extensionFolder)-1]
-
 	phpIniCfg := config.PhpIniConfig{
-		PhpHome:      n.ComposerLayer.Root,
-		PhpAPI:       apiVersion,
+		PhpHome:      os.Getenv("PHP_HOME"),
+		PhpAPI:       os.Getenv("PHP_API"),
 		Extensions: []string{
 			"openssl",
 			"zlib",

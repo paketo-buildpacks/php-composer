@@ -2,9 +2,9 @@ package composer_test
 
 import (
 	"fmt"
-	"github.com/cloudfoundry/php-cnb/php"
 	"github.com/sclevine/spec/report"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -53,11 +53,7 @@ func testContributor(t *testing.T, when spec.G, it spec.S) {
 			f.AddDependency(composer.Dependency, stubComposerFixture)
 
 			version := "12345"
-			test.TouchFile(
-				t,
-				f.Build.Layers.Layer(php.Dependency).Root,
-				"lib/php/extensions/no-debug-non-zts-"+version,
-			)
+			os.Setenv("PHP_API", version)
 
 			composerDep, _, err := composer.NewContributor(f.Build)
 			Expect(err).NotTo(HaveOccurred())
@@ -72,8 +68,8 @@ func testContributor(t *testing.T, when spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(ini)).To(ContainSubstring(fmt.Sprintf("no-debug-non-zts-%s", version)))
-			Expect(string(ini)).To(ContainSubstring("extension = openssl"))
-			Expect(string(ini)).To(ContainSubstring("extension = zlib"))
+			Expect(string(ini)).To(ContainSubstring("extension = openssl.so"))
+			Expect(string(ini)).To(ContainSubstring("extension = zlib.so"))
 		})
 	})
 }
