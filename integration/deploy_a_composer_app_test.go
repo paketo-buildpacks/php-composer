@@ -49,6 +49,8 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 
 	when("deploying a basic Composer app", func() {
 		it("it deploys using defaults and installs a package using Composer", func() {
+			//TODO: App is failing to start, it appears to be trying to run HTTPD, but that layer is not present
+			//      and this test is not using that buildpack. Need to figure out why php-web is trying to use HTTPD.
 			err := app.Start()
 			fmt.Printf("%v", err)
 			if err != nil {
