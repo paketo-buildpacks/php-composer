@@ -105,11 +105,7 @@ func (c Contributor) configureGithubOauthToken() error {
 func (c Contributor) contributeComposer(layer layers.Layer) error {
 	// TODO:
 	// Run `composer global require` for all packages set in buildpack.yml
-	// TODO:
-	//   - currently composer sets the buildplan metadata to indicate build true, but php-web-cnb
-	//      is overwriting this when it sets the metadata to indicate deploy true. Need to adjust php-web-cnb
-	//      to look if a previous buildpack has set metadata build to true & carry that forward.
-	//   - Then cut a new release of php-web-cnb
+	// TODO: Need to cut a new release of php-web-cnb
 
 	err := c.warnAboutPublicComposerFiles(layer)
 	if err != nil {
@@ -157,6 +153,11 @@ func (c Contributor) initializeEnv() error {
 	}
 
 	err = os.Setenv("COMPOSER_VENDOR_DIR", filepath.Join(c.app.Root, "vendor"))
+	if err != nil {
+		return err
+	}
+
+	err = os.Setenv("PHPRC", filepath.Join(c.composerLayer.Root, "composer-php.ini"))
 	if err != nil {
 		return err
 	}
