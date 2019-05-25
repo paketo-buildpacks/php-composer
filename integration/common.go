@@ -1,11 +1,12 @@
 package integration
 
 import (
-	"github.com/cloudfoundry/dagger"
 	"path/filepath"
+
+	"github.com/cloudfoundry/dagger"
 )
 
-func PreparePhpApp (appName string) (*dagger.App, error) {
+func PreparePhpApp(appName string) (*dagger.App, error) {
 	bpRoot, err := dagger.FindBPRoot()
 	if err != nil {
 		return &dagger.App{}, err
@@ -16,14 +17,12 @@ func PreparePhpApp (appName string) (*dagger.App, error) {
 		return &dagger.App{}, err
 	}
 
-	//phpBp, err := dagger.GetLatestBuildpack("php-cnb")
-	phpBp, err := dagger.PackageBuildpack("/Users/pivotal/workspace/php-cnb")
+	phpBp, err := dagger.GetLatestBuildpack("php-cnb")
 	if err != nil {
 		return &dagger.App{}, err
 	}
 
-	//phpWebBp, err := dagger.GetLatestBuildpack("php-web-cnb")
-	phpWebBp, err := dagger.PackageBuildpack("/Users/pivotal/workspace/php-web-cnb")
+	phpWebBp, err := dagger.GetLatestBuildpack("php-web-cnb")
 	if err != nil {
 		return &dagger.App{}, err
 	}
