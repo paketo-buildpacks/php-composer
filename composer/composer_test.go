@@ -1,13 +1,14 @@
 package composer
 
 import (
+	"path/filepath"
+	"testing"
+
 	"github.com/cloudfoundry/libcfbuildpack/test"
 	"github.com/cloudfoundry/php-composer-cnb/runner"
 	. "github.com/onsi/gomega"
 	"github.com/sclevine/spec"
 	"github.com/sclevine/spec/report"
-	"path/filepath"
-	"testing"
 )
 
 func TestUnitComposer(t *testing.T) {
@@ -23,7 +24,6 @@ func testComposer(t *testing.T, when spec.G, it spec.S) {
 		factory = test.NewBuildFactory(t)
 	})
 
-
 	when("we are running composer", func() {
 		var fakeRunner *runner.FakeRunner
 		var comp Composer
@@ -31,7 +31,7 @@ func testComposer(t *testing.T, when spec.G, it spec.S) {
 
 		it.Before(func() {
 			fakeRunner = &runner.FakeRunner{}
-			comp = NewComposer(factory.Build.Application.Root, "/tmp")
+			comp = NewComposer(factory.Build.Application.Root, "/tmp", factory.Build.Logger)
 			comp.Runner = fakeRunner
 			expectedPharPath = filepath.Join("/tmp", ComposerPHAR)
 		})
@@ -99,16 +99,21 @@ func testComposer(t *testing.T, when spec.G, it spec.S) {
 	})
 
 	when("there is a composer.json location specified in buildpack.yml", func() {
-		var compsoserPath string
-		var subDir string
-		it.Before(func() {
-			subDir = "subdir"
+		it("should find the composer.json file under webdir", func() {
+			subDir := "subdir"
 			test.WriteFile(t, filepath.Join(factory.Build.Application.Root, "buildpack.yml"), `{"php": {"webdirectory": "public"}, "composer": {"json_path": "subdir"}}`)
-			compsoserPath = filepath.Join(factory.Build.Application.Root, "public", subDir, ComposerJSON)
+			compsoserPath := filepath.Join(factory.Build.Application.Root, "public", subDir, ComposerJSON)
 			test.WriteFile(t, compsoserPath, "")
+			path, err := FindComposer(factory.Build.Application.Root, subDir)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(path).To(Equal(compsoserPath))
 		})
 
-		it("should find the composer.json file", func() {
+		it("should find the composer.json file under app_root", func() {
+			subDir := "subdir"
+			test.WriteFile(t, filepath.Join(factory.Build.Application.Root, "buildpack.yml"), `{"composer": {"json_path": "subdir"}}`)
+			compsoserPath := filepath.Join(factory.Build.Application.Root, subDir, ComposerJSON)
+			test.WriteFile(t, compsoserPath, "")
 			path, err := FindComposer(factory.Build.Application.Root, subDir)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(path).To(Equal(compsoserPath))

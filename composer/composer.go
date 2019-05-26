@@ -65,27 +65,33 @@ func (c Composer) Config(key, value string, global bool) error {
 
 // FindComposer locates the composer JSON and composer lock files
 func FindComposer(appRoot string, composerJSONPath string) (string, error) {
-	composerJSON := filepath.Join(appRoot, ComposerJSON)
-
-	if exists, err := helper.FileExists(composerJSON); err != nil {
-		return "", fmt.Errorf("error checking filepath: %s", composerJSON)
-	} else if exists {
-		return composerJSON, nil
-	}
-
 	phpBuildpackYAML, err := phpweb.LoadBuildpackYAML(appRoot)
 	if err != nil {
 		return "", err
 	}
 
-	composerJSON = filepath.Join(appRoot, phpBuildpackYAML.Config.WebDirectory, composerJSONPath, ComposerJSON)
-	if exists, err := helper.FileExists(composerJSON); err != nil {
-		return "", fmt.Errorf("error checking filepath: %s", composerJSON)
-	} else if exists {
-		return composerJSON, nil
+	paths := []string{
+		filepath.Join(appRoot, ComposerJSON),
+		filepath.Join(appRoot, phpBuildpackYAML.Config.WebDirectory, ComposerJSON),
 	}
 
-	return "", fmt.Errorf(`no "%s" found at: %s`, ComposerJSON, composerJSON)
+	if composerJSONPath != "" {
+		paths = append(
+			paths,
+			filepath.Join(appRoot, composerJSONPath, ComposerJSON),
+			filepath.Join(appRoot, phpBuildpackYAML.Config.WebDirectory, composerJSONPath, ComposerJSON),
+		)
+	}
+
+	for _, path := range paths {
+		if exists, err := helper.FileExists(path); err != nil {
+			return "", fmt.Errorf("error checking filepath: %s", path)
+		} else if exists {
+			return path, nil
+		}
+	}
+
+	return "", fmt.Errorf(`no "%s" found in the following locations: %v`, ComposerJSON, paths)
 }
 
 type ComposerConfig struct {
