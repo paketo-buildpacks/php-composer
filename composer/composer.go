@@ -109,6 +109,10 @@ type BuildpackYAML struct {
 // LoadComposerBuildpackYAML loads the buildpack YAML from disk
 func LoadComposerBuildpackYAML(appRoot string) (BuildpackYAML, error) {
 	buildpackYAML, configFile := BuildpackYAML{}, filepath.Join(appRoot, "buildpack.yml")
+
+	buildpackYAML.Composer.InstallOptions = []string{"--no-dev"}
+	buildpackYAML.Composer.VendorDirectory = "vendor"
+
 	if exists, err := helper.FileExists(configFile); err != nil {
 		return BuildpackYAML{}, err
 	} else if exists {

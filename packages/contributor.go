@@ -71,7 +71,7 @@ func NewContributor(context build.Build, composerPharPath string) (Contributor, 
 		composer:         composer.NewComposer(composerDir, composerPharPath, context.Logger),
 	}
 
-	if err := contributor.initializeEnv(); err != nil {
+	if err := contributor.initializeEnv(buildpackYAML.Composer.VendorDirectory); err != nil {
 		return Contributor{}, false, err
 	}
 
@@ -138,7 +138,7 @@ func (c Contributor) warnAboutPublicComposerFiles(layer layers.Layer) error {
 	return nil
 }
 
-func (c Contributor) initializeEnv() error {
+func (c Contributor) initializeEnv(vendorDirectory string) error {
 	// override anything possibly set by the user
 	err := os.Setenv("COMPOSER_HOME", filepath.Join(c.composerLayer.Root, ".composer"))
 	if err != nil {
@@ -150,7 +150,13 @@ func (c Contributor) initializeEnv() error {
 		return err
 	}
 
-	err = os.Setenv("COMPOSER_VENDOR_DIR", filepath.Join(c.app.Root, "vendor"))
+	// set `--no-interaction` flag to every command, since users cannot interact
+	err = os.Setenv("COMPOSER_NO_INTERACTION", "1")
+	if err != nil {
+		return err
+	}
+
+	err = os.Setenv("COMPOSER_VENDOR_DIR", filepath.Join(c.app.Root, vendorDirectory))
 	if err != nil {
 		return err
 	}
