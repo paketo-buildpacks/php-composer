@@ -2,13 +2,15 @@ package composer
 
 import (
 	"fmt"
-	"github.com/cloudfoundry/libcfbuildpack/helper"
-	"github.com/cloudfoundry/php-composer-cnb/runner"
-	"github.com/cloudfoundry/php-web-cnb/phpweb"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/cloudfoundry/libcfbuildpack/helper"
+	"github.com/cloudfoundry/libcfbuildpack/logger"
+	"github.com/cloudfoundry/php-composer-cnb/runner"
+	"github.com/cloudfoundry/php-web-cnb/phpweb"
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -21,14 +23,18 @@ const (
 )
 
 type Composer struct {
+	Logger     logger.Logger
 	Runner     runner.Runner
 	workingDir string
 	pharPath   string
 }
 
-func NewComposer(composerJsonPath, composerPharPath string) Composer {
+func NewComposer(composerJsonPath, composerPharPath string, logger logger.Logger) Composer {
 	return Composer{
-		Runner:     runner.ComposerRunner{},
+		Logger: logger,
+		Runner: runner.ComposerRunner{
+			Logger: logger,
+		},
 		workingDir: composerJsonPath,
 		pharPath:   filepath.Join(composerPharPath, ComposerPHAR),
 	}

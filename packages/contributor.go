@@ -3,18 +3,18 @@ package packages
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"io/ioutil"
+	"math/rand"
+	"os"
+	"path/filepath"
+
 	"github.com/buildpack/libbuildpack/application"
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
 	"github.com/cloudfoundry/php-composer-cnb/composer"
 	"github.com/cloudfoundry/php-web-cnb/phpweb"
-	"io/ioutil"
-	"math/rand"
-	"os"
-	"path/filepath"
 )
-
 
 type Metadata struct {
 	Name string
@@ -63,13 +63,12 @@ func NewContributor(context build.Build, composerPharPath string) (Contributor, 
 		hash = sha256.Sum256(randBuf)
 	}
 
-
 	contributor := Contributor{
 		app:              context.Application,
 		composerLayer:    context.Layers.Layer(composer.Dependency),
 		cacheLayer:       context.Layers.Layer(composer.CacheDependency),
 		composerMetadata: Metadata{"PHP Composer", hex.EncodeToString(hash[:])},
-		composer:         composer.NewComposer(composerDir, composerPharPath),
+		composer:         composer.NewComposer(composerDir, composerPharPath, context.Logger),
 	}
 
 	if err := contributor.initializeEnv(); err != nil {
@@ -80,7 +79,7 @@ func NewContributor(context build.Build, composerPharPath string) (Contributor, 
 }
 
 func (c Contributor) Contribute() error {
-	if err := c.composerLayer.Contribute(nil , c.contributeComposer, layers.Build); err != nil {
+	if err := c.composerLayer.Contribute(nil, c.contributeComposer, layers.Build); err != nil {
 		return err
 	}
 
@@ -138,7 +137,6 @@ func (c Contributor) warnAboutPublicComposerFiles(layer layers.Layer) error {
 
 	return nil
 }
-
 
 func (c Contributor) initializeEnv() error {
 	// override anything possibly set by the user
