@@ -29,9 +29,9 @@ github.com/cloudfoundry/libcfbuildpack/test
 github.com/cloudfoundry/libcfbuildpack/internal
 # github.com/cloudfoundry/php-cnb v0.0.2
 github.com/cloudfoundry/php-cnb/php
-# github.com/cloudfoundry/php-web-cnb v0.0.3
-github.com/cloudfoundry/php-web-cnb/phpweb
+# github.com/cloudfoundry/php-web-cnb v0.0.4-0.20190521210427-71ed2708047b
 github.com/cloudfoundry/php-web-cnb/config
+github.com/cloudfoundry/php-web-cnb/phpweb
 github.com/cloudfoundry/php-web-cnb/procmgr
 # github.com/fatih/color v1.7.0
 github.com/fatih/color

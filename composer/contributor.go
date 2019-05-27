@@ -4,6 +4,8 @@ import (
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
+	"github.com/cloudfoundry/php-cnb/php"
+	"github.com/cloudfoundry/php-web-cnb/config"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,6 +13,7 @@ import (
 
 type Contributor struct {
 	ComposerLayer     layers.DependencyLayer
+	PhpLayer					layers.Layer
 	buildContribution bool
 }
 
@@ -30,7 +33,10 @@ func NewContributor(builder build.Build) (Contributor, bool, error) {
 		return Contributor{}, false, err
 	}
 
-	contributor := Contributor{ComposerLayer: builder.Layers.DependencyLayer(dep)}
+	contributor := Contributor{
+		ComposerLayer: builder.Layers.DependencyLayer(dep),
+		PhpLayer: builder.Layers.Layer(php.Dependency),
+	}
 
 	if _, ok := plan.Metadata["build"]; ok {
 		contributor.buildContribution = true
@@ -49,15 +55,14 @@ func (n Contributor) Contribute() error {
 		}
 
 		// add to current path so it's accessible by the rest of this buildpack
-		layer.Logger.Info("PATH Before: %s", os.Getenv("PATH"))
 		newPath := strings.Join([]string{ os.Getenv("PATH"), filepath.Join(layer.Root, "bin")}, string(os.PathListSeparator))
 		err = os.Setenv("PATH", newPath)
 		if err != nil {
 			return err
 		}
 
-		layer.Logger.Info("PATH After: %s", os.Getenv("PATH"))
-		return nil
+		// generate temp php.ini for use by Composer during this buildpack
+		return n.writePhpIni()
 	}, n.flags()...)
 }
 
@@ -69,4 +74,22 @@ func (n Contributor) flags() []layers.Flag {
 	}
 
 	return flags
+}
+
+func (n Contributor) writePhpIni() error {
+	phpIniCfg := config.PhpIniConfig{
+		PhpHome:      os.Getenv("PHP_HOME"),
+		PhpAPI:       os.Getenv("PHP_API"),
+		Extensions: []string{
+			"openssl",
+			"zlib",
+		},
+	}
+
+	phpIniPath := filepath.Join(n.ComposerLayer.Root, "composer-php.ini")
+	if err := config.ProcessTemplateToFile(config.PhpIniTemplate, phpIniPath, phpIniCfg); err != nil {
+		return err
+	}
+
+	return nil
 }

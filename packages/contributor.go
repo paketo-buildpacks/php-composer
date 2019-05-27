@@ -3,18 +3,18 @@ package packages
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"io/ioutil"
+	"math/rand"
+	"os"
+	"path/filepath"
+
 	"github.com/buildpack/libbuildpack/application"
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
 	"github.com/cloudfoundry/php-composer-cnb/composer"
 	"github.com/cloudfoundry/php-web-cnb/phpweb"
-	"io/ioutil"
-	"math/rand"
-	"os"
-	"path/filepath"
 )
-
 
 type Metadata struct {
 	Name string
@@ -63,16 +63,15 @@ func NewContributor(context build.Build, composerPharPath string) (Contributor, 
 		hash = sha256.Sum256(randBuf)
 	}
 
-
 	contributor := Contributor{
 		app:              context.Application,
 		composerLayer:    context.Layers.Layer(composer.Dependency),
 		cacheLayer:       context.Layers.Layer(composer.CacheDependency),
 		composerMetadata: Metadata{"PHP Composer", hex.EncodeToString(hash[:])},
-		composer:         composer.NewComposer(composerDir, composerPharPath),
+		composer:         composer.NewComposer(composerDir, composerPharPath, context.Logger),
 	}
 
-	if err := contributor.initializeEnv(); err != nil {
+	if err := contributor.initializeEnv(buildpackYAML.Composer.VendorDirectory); err != nil {
 		return Contributor{}, false, err
 	}
 
@@ -80,7 +79,7 @@ func NewContributor(context build.Build, composerPharPath string) (Contributor, 
 }
 
 func (c Contributor) Contribute() error {
-	if err := c.composerLayer.Contribute(nil , c.contributeComposer, layers.Build); err != nil {
+	if err := c.composerLayer.Contribute(nil, c.contributeComposer, layers.Build); err != nil {
 		return err
 	}
 
@@ -105,11 +104,7 @@ func (c Contributor) configureGithubOauthToken() error {
 func (c Contributor) contributeComposer(layer layers.Layer) error {
 	// TODO:
 	// Run `composer global require` for all packages set in buildpack.yml
-	// TODO:
-	//   - currently composer sets the buildplan metadata to indicate build true, but php-web-cnb
-	//      is overwriting this when it sets the metadata to indicate deploy true. Need to adjust php-web-cnb
-	//      to look if a previous buildpack has set metadata build to true & carry that forward.
-	//   - Then cut a new release of php-web-cnb
+	// TODO: Need to cut a new release of php-web-cnb
 
 	err := c.warnAboutPublicComposerFiles(layer)
 	if err != nil {
@@ -143,8 +138,7 @@ func (c Contributor) warnAboutPublicComposerFiles(layer layers.Layer) error {
 	return nil
 }
 
-
-func (c Contributor) initializeEnv() error {
+func (c Contributor) initializeEnv(vendorDirectory string) error {
 	// override anything possibly set by the user
 	err := os.Setenv("COMPOSER_HOME", filepath.Join(c.composerLayer.Root, ".composer"))
 	if err != nil {
@@ -156,7 +150,18 @@ func (c Contributor) initializeEnv() error {
 		return err
 	}
 
-	err = os.Setenv("COMPOSER_VENDOR_DIR", filepath.Join(c.app.Root, "vendor"))
+	// set `--no-interaction` flag to every command, since users cannot interact
+	err = os.Setenv("COMPOSER_NO_INTERACTION", "1")
+	if err != nil {
+		return err
+	}
+
+	err = os.Setenv("COMPOSER_VENDOR_DIR", filepath.Join(c.app.Root, vendorDirectory))
+	if err != nil {
+		return err
+	}
+
+	err = os.Setenv("PHPRC", filepath.Join(c.composerLayer.Root, "composer-php.ini"))
 	if err != nil {
 		return err
 	}

@@ -2,12 +2,13 @@ package packages
 
 import (
 	"bytes"
-	"github.com/cloudfoundry/libcfbuildpack/logger"
-	"github.com/cloudfoundry/php-composer-cnb/composer"
-	"github.com/cloudfoundry/php-composer-cnb/runner"
 	"math/rand"
 	"path/filepath"
 	"testing"
+
+	"github.com/cloudfoundry/libcfbuildpack/logger"
+	"github.com/cloudfoundry/php-composer-cnb/composer"
+	"github.com/cloudfoundry/php-composer-cnb/runner"
 
 	bplogger "github.com/buildpack/libbuildpack/logger"
 	"github.com/cloudfoundry/libcfbuildpack/test"
@@ -16,7 +17,6 @@ import (
 	"github.com/sclevine/spec"
 	"github.com/sclevine/spec/report"
 )
-
 
 func TestUnitComposerPackage(t *testing.T) {
 	spec.Run(t, "ComposerPackage", testComposerPackage, spec.Report(report.Terminal{}))
@@ -82,7 +82,7 @@ func testComposerPackage(t *testing.T, when spec.G, it spec.S) {
 			// run the contributor
 			contributor, willContribute, err := NewContributor(factory.Build, "/tmp")
 
-			Expect(err).ToNot(HaveOccurred());
+			Expect(err).ToNot(HaveOccurred())
 			Expect(willContribute).To(BeTrue())
 
 			debug := &bytes.Buffer{}
@@ -103,15 +103,15 @@ func testComposerPackage(t *testing.T, when spec.G, it spec.S) {
 		it("runs composer config to make that available to composer", func() {
 
 			fakeRunner := &runner.FakeRunner{}
-			comp := composer.NewComposer(factory.Build.Application.Root, "/tmp")
+			comp := composer.NewComposer(factory.Build.Application.Root, "/tmp", factory.Build.Logger)
 			comp.Runner = fakeRunner
 
 			contributor := Contributor{
-				app: factory.Build.Application,
-				composerLayer: factory.Build.Layers.Layer("composer"),
-				cacheLayer: factory.Build.Layers.Layer("cache"),
+				app:              factory.Build.Application,
+				composerLayer:    factory.Build.Layers.Layer("composer"),
+				cacheLayer:       factory.Build.Layers.Layer("cache"),
 				composerMetadata: Metadata{},
-				composer: comp,
+				composer:         comp,
 				composerBuildpackYAML: composer.BuildpackYAML{
 					Composer: composer.ComposerConfig{
 						GitHubOAUTHToken: "qwerty",

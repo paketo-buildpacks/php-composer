@@ -1,32 +1,39 @@
 package integration
 
 import (
-	"github.com/cloudfoundry/dagger"
 	"path/filepath"
+
+	"github.com/cloudfoundry/dagger"
 )
 
-func PreparePhpApp (appName string) (*dagger.App, error) {
+// PreparePhpBps builds the current buildpacks
+func PreparePhpBps() ([]string, error) {
 	bpRoot, err := dagger.FindBPRoot()
 	if err != nil {
-		return &dagger.App{}, err
+		return []string{}, err
 	}
 
 	composerBp, err := dagger.PackageBuildpack(bpRoot)
 	if err != nil {
-		return &dagger.App{}, err
+		return []string{}, err
 	}
 
 	phpBp, err := dagger.GetLatestBuildpack("php-cnb")
 	if err != nil {
-		return &dagger.App{}, err
+		return []string{}, err
 	}
 
 	phpWebBp, err := dagger.GetLatestBuildpack("php-web-cnb")
 	if err != nil {
-		return &dagger.App{}, err
+		return []string{}, err
 	}
 
-	app, err := dagger.PackBuild(filepath.Join("testdata", appName), phpBp, composerBp, phpWebBp)
+	return []string{phpBp, composerBp, phpWebBp}, nil
+}
+
+// PreparePhpApp builds the given test app
+func PreparePhpApp(appName string, buildpacks []string) (*dagger.App, error) {
+	app, err := dagger.PackBuild(filepath.Join("testdata", appName), buildpacks...)
 	if err != nil {
 		return &dagger.App{}, err
 	}

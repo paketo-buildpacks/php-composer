@@ -4,6 +4,9 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
+
+	"github.com/cloudfoundry/libcfbuildpack/logger"
 )
 
 type Runner interface {
@@ -11,15 +14,18 @@ type Runner interface {
 }
 
 type ComposerRunner struct {
-	Out io.Writer
-	Err io.Writer
+	Logger logger.Logger
+	Out    io.Writer
+	Err    io.Writer
 }
 
 func (r ComposerRunner) Run(bin, dir string, args ...string) error {
 	var cmd *exec.Cmd
 	if len(args) > 0 {
+		r.Logger.Debug("Running `%s %s` from directory '%s'", bin, strings.Join(args, " "), dir)
 		cmd = exec.Command(bin, args...)
 	} else {
+		r.Logger.Debug("Running `%s` from directory '%s'", bin, dir)
 		cmd = exec.Command(bin)
 	}
 
