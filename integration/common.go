@@ -18,14 +18,12 @@ func PreparePhpBps() ([]string, error) {
 		return []string{}, err
 	}
 
-	//phpBp, err := dagger.GetLatestBuildpack("php-cnb")
-	phpBp, err := dagger.PackageBuildpack("/Users/dmikusa/Downloads/buildpacks/php-cnb")
+	phpBp, err := dagger.GetLatestBuildpack("php-cnb")
 	if err != nil {
 		return []string{}, err
 	}
 
-	//phpWebBp, err := dagger.GetLatestBuildpack("php-web-cnb")
-	phpWebBp, err := dagger.PackageBuildpack("/Users/dmikusa/Downloads/buildpacks/php-web-cnb")
+	phpWebBp, err := dagger.GetLatestBuildpack("php-web-cnb")
 	if err != nil {
 		return []string{}, err
 	}
