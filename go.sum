@@ -10,9 +10,6 @@ github.com/buildpack/libbuildpack v1.11.0/go.mod h1:tKGgGnBYfOL23Ma4JWM8ucBcGX6I
 github.com/buildpack/libbuildpack v1.14.0 h1:LaVcgK7A1vDkYOzzfzCoIzubDSIV9j/yf74XTvIwi0M=
 github.com/buildpack/libbuildpack v1.14.0/go.mod h1:99tDQ0zOa+EyVvwhh+9xtluz+L96+HzCcTI9XJWOzPI=
 github.com/cloudfoundry/dagger v0.0.0-20190319135526-f8eb1263b193/go.mod h1:+csOcW7GEqDwsV/MxLuXL0qVIgzjm6lbUbP2JXe5R8c=
-github.com/cloudfoundry/dagger v0.0.0-20190401212155-44a90aadbea5/go.mod h1:mZHx1IXvGU3/bi7bsXTCJpg7PDnFheNL5lfcLaWEh7Q=
-github.com/cloudfoundry/dagger v0.0.0-20190507184203-37081c3edd7b h1:4oA955fKxQpvH5r4iCNFQJLrwYEmRG9bnUQfyyK7ZXE=
-github.com/cloudfoundry/dagger v0.0.0-20190507184203-37081c3edd7b/go.mod h1:WdF5u2bg4xztLnFRel7bviH5rEI6zY/EGX2w1xxd7nI=
 github.com/cloudfoundry/dagger v0.0.0-20190521201554-93417312948c h1:xlVvsRJn1+pt/O+I8MJ/s+fr+qzSRwQsgO8nTK8zEZ4=
 github.com/cloudfoundry/dagger v0.0.0-20190521201554-93417312948c/go.mod h1:WdF5u2bg4xztLnFRel7bviH5rEI6zY/EGX2w1xxd7nI=
 github.com/cloudfoundry/httpd-cnb v0.0.2/go.mod h1:dBaVY5+iyfXtyUjdrdHy10ttjwzvR6kp5BUFdsWW0EU=
@@ -25,9 +22,10 @@ github.com/cloudfoundry/php-cnb v0.0.1/go.mod h1:TedI99B+atmRGenhsCa1yuwtaIIQDzX
 github.com/cloudfoundry/php-cnb v0.0.2 h1:9K+mqBT0f+yxKac0bfj/okD3H2R6dbFG269c0jiZHSU=
 github.com/cloudfoundry/php-cnb v0.0.2/go.mod h1:wmL8/TWUhD4B6ssS3Lh+JuQLCNtqFxXC78cNF7T0Zuo=
 github.com/cloudfoundry/php-web-cnb v0.0.3 h1:G0RwgvZr1QJh71WhB/OnrAE+Kopne/keQZlT85ovI3o=
-github.com/cloudfoundry/php-web-cnb v0.0.3/go.mod h1:sPpyGTr9YPuTyJKIO59rby7cei4iGnknJhXHH/HIjAs=
 github.com/cloudfoundry/php-web-cnb v0.0.4-0.20190521205631-1e120a6a5dd4 h1:XXs8+kSJh2FkWwEg62oARjgT1TYHFXbVTnwhUQi6Dmw=
 github.com/cloudfoundry/php-web-cnb v0.0.4-0.20190521205631-1e120a6a5dd4/go.mod h1:0w2D4sCfRjsGBOlxMjnxE+sjyHPCfaHwbUoaSSninE8=
+github.com/cloudfoundry/php-web-cnb v0.0.4-0.20190521210427-71ed2708047b h1:66e6bqefjpdlmxiounG18cHyRGzyFzKk5aBGkWdqLyo=
+github.com/cloudfoundry/php-web-cnb v0.0.4-0.20190521210427-71ed2708047b/go.mod h1:0w2D4sCfRjsGBOlxMjnxE+sjyHPCfaHwbUoaSSninE8=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fsnotify/fsnotify v1.4.7 h1:IXs+QLmnXW2CcXuY+8Mzv/fWEsPGWxqefPtCP5CnV9I=
