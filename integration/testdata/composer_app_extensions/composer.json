@@ -1,0 +1,16 @@
+{
+    "require": {
+        "monolog/monolog": "1.0.*",
+        "php": ">=7.1",
+        "ext-zip": "*",
+        "ext-gd": "*",
+        "ext-fileinfo": "*",
+        "ext-mysqli": "*",
+        "ext-mbstring": "*"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "php -r 'phpinfo();'"
+        ]
+    }
+}

@@ -1,6 +1,7 @@
 package composer
 
 import (
+	"bytes"
 	"path/filepath"
 	"testing"
 
@@ -142,5 +143,15 @@ func testComposer(t *testing.T, when spec.G, it spec.S) {
 			Expect(bpYaml.Composer.VendorDirectory).To(Equal("somedir"))
 			Expect(bpYaml.Composer.InstallOptions).To(ConsistOf("one", "two", "three"))
 		})
+	})
+
+	when("there are PHP extensions listed in composer.json", func() {
+		buf := bytes.NewBufferString(`ext-fileinfo  1.0.5     success
+			ext-gd        7.1.23    success
+			ext-mbstring  7.1.23    success
+			ext-mysqli    7.1.23    success
+			ext-zip       1.13.5    success
+			php           7.1.23    success`)
+
 	})
 }

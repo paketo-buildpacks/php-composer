@@ -34,6 +34,7 @@ type Contributor struct {
 	composerBuildpackYAML composer.BuildpackYAML
 }
 
+// NewContributor creates a new "packages" contributor for installing Composer packages
 func NewContributor(context build.Build, composerPharPath string) (Contributor, bool, error) {
 	buildpackYAML, err := composer.LoadComposerBuildpackYAML(context.Application.Root)
 	if err != nil {
@@ -104,7 +105,6 @@ func (c Contributor) configureGithubOauthToken() error {
 func (c Contributor) contributeComposer(layer layers.Layer) error {
 	// TODO:
 	// Run `composer global require` for all packages set in buildpack.yml
-	// TODO: Need to cut a new release of php-web-cnb
 
 	err := c.warnAboutPublicComposerFiles(layer)
 	if err != nil {
@@ -162,6 +162,11 @@ func (c Contributor) initializeEnv(vendorDirectory string) error {
 	}
 
 	err = os.Setenv("PHPRC", filepath.Join(c.composerLayer.Root, "composer-php.ini"))
+	if err != nil {
+		return err
+	}
+
+	err = os.Setenv("PHP_INI_SCAN_DIR", filepath.Join(c.app.Root, ".php.ini.d"))
 	if err != nil {
 		return err
 	}

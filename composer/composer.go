@@ -1,10 +1,13 @@
 package composer
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/logger"
@@ -22,6 +25,7 @@ const (
 	GithubOAUTHKey  = "github-oauth.github.com"
 )
 
+// Composer runner
 type Composer struct {
 	Logger     logger.Logger
 	Runner     runner.Runner
@@ -29,6 +33,7 @@ type Composer struct {
 	pharPath   string
 }
 
+// NewComposer creates a new Composer runner
 func NewComposer(composerJsonPath, composerPharPath string, logger logger.Logger) Composer {
 	return Composer{
 		Logger: logger,
@@ -40,20 +45,24 @@ func NewComposer(composerJsonPath, composerPharPath string, logger logger.Logger
 	}
 }
 
+// Install runs `composer install`
 func (c Composer) Install(args ...string) error {
 	args = append([]string{c.pharPath, "install", "--no-progress"}, args...)
 	return c.Runner.Run("php", c.workingDir, args...)
 }
 
+// Version runs `composer version`
 func (c Composer) Version() error {
 	return c.Runner.Run("php", c.workingDir, c.pharPath, "-V")
 }
 
+// Global runs `composer global`
 func (c Composer) Global(args ...string) error {
 	args = append([]string{c.pharPath, "global", "require", "--no-progress"}, args...)
 	return c.Runner.Run("php", c.workingDir, args...)
 }
 
+// Config runs `composer config`
 func (c Composer) Config(key, value string, global bool) error {
 	args := []string{c.pharPath, "config"}
 	if global {
@@ -61,6 +70,36 @@ func (c Composer) Config(key, value string, global bool) error {
 	}
 	args = append(args, key, fmt.Sprintf(`"%s"`, value))
 	return c.Runner.Run("php", c.workingDir, args...)
+}
+
+// CheckPlatformReqs looks for required extension
+func (c Composer) CheckPlatformReqs() ([]string, error) {
+	// custom runner so we can capture STDOUT
+	buf := bytes.Buffer{}
+	runner := runner.ComposerRunner{Logger: c.Logger, Out: &buf}
+
+	// let Composer tell us what extensions are required
+	err := runner.Run("php", c.workingDir, "check-platform-reqs")
+	if err != nil {
+		return []string{}, err
+	}
+
+	// read out just the list of extensions that are required
+	scanner := bufio.NewScanner(&buf)
+	extensions := []string{}
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.HasPrefix(line, "ext-") {
+			exts := strings.Split(line, " ")
+			extensions = append(extensions, exts[0])
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return []string{}, err
+	}
+
+	return extensions, nil
 }
 
 // FindComposer locates the composer JSON and composer lock files
