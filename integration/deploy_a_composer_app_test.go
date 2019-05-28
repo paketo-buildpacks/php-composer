@@ -51,13 +51,11 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 		err error
 	)
 
-	it.Before(func() {
-	})
-
 	when("deploying a basic Composer app", func() {
 		it("it deploys using defaults and installs a package using Composer", func() {
 			app, err = PreparePhpApp("composer_app", buildpacks)
 			Expect(err).ToNot(HaveOccurred())
+			defer app.Destroy()
 
 			err = app.Start()
 			if err != nil {
@@ -83,8 +81,9 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 		})
 
 		it("deploys using custom composer setting and installs a package using Composer", func() {
-			app, err = PreparePhpApp("composer_custom_app", buildpacks)
+			app, err = PreparePhpApp("composer_app_custom", buildpacks)
 			Expect(err).ToNot(HaveOccurred())
+			defer app.Destroy()
 
 			err = app.Start()
 			if err != nil {
@@ -109,8 +108,50 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 			Expect(body).To(ContainSubstring("OK"))
 		})
 
-		it.After(func() {
-			Expect(app.Destroy()).To(Succeed())
+		it("deploys an app that has PHP extensions specified in composer.json", func() {
+			ExpectedExtensions := []string {
+				"zip",
+				"gd",
+				"fileinfo",
+				"mysqli",
+				"mbstring",
+			}
+
+			app, err = PreparePhpApp("composer_app_extensions", buildpacks)
+			Expect(err).ToNot(HaveOccurred())
+			defer app.Destroy()
+
+			err = app.Start()
+			if err != nil {
+				_, err = fmt.Fprintf(os.Stderr, "App failed to start: %v\n", err)
+				containerID, imageName, volumeIDs, err := app.Info()
+				Expect(err).NotTo(HaveOccurred())
+				fmt.Printf("ContainerID: %s\nImage Name: %s\nAll leftover cached volumes: %v\n", containerID, imageName, volumeIDs)
+
+				containerLogs, err := app.Logs()
+				Expect(err).NotTo(HaveOccurred())
+				fmt.Printf("Container Logs:\n %s\n", containerLogs)
+				t.FailNow()
+			}
+
+			// ensure composer library is available & functions
+			logs, err := app.Logs()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(logs).To(ContainSubstring("SUCCESS"))
+
+			body, _, err := app.HTTPGet("/")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(body).To(ContainSubstring("OK"))
+
+			// ensure C extensions are loaded at runtime & during post-install scripts
+			Expect(logs).ToNot(ContainSubstring("Unable to load dynamic library"))
+
+			body, _, err = app.HTTPGet("/extensions.php")
+			Expect(err).ToNot(HaveOccurred())
+			for _, extension := range ExpectedExtensions {
+				Expect(body).To(ContainSubstring(extension))
+				Expect(app.BuildLogs()).To(ContainSubstring(fmt.Sprintf("PostInstall [%s]", extension)))
+			}
 		})
 	})
 }

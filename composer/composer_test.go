@@ -146,12 +146,24 @@ func testComposer(t *testing.T, when spec.G, it spec.S) {
 	})
 
 	when("there are PHP extensions listed in composer.json", func() {
-		buf := bytes.NewBufferString(`ext-fileinfo  1.0.5     success
-			ext-gd        7.1.23    success
-			ext-mbstring  7.1.23    success
-			ext-mysqli    7.1.23    success
-			ext-zip       1.13.5    success
-			php           7.1.23    success`)
+		buf := bytes.NewBufferString(`ext-fileinfo  1.0.5                                      success   
+			ext-gd        7.1.23                                     success   
+			ext-kasjadf   n/a     __root__ requires ext-kasjadf (*)  missing   
+			ext-mbstring  7.1.23                                     success   
+			ext-mysqli    7.1.23                                     success   
+			ext-zip       1.13.5                                     success   
+			php           7.1.23                                     success   `)
+
+		it("grabs a list of the extensions excluding php and already-installed extensions", func() {
+			fakeRunner := &runner.FakeRunner{}
+			comp := NewComposer(factory.Build.Application.Root, "/tmp", factory.Build.Logger)
+			comp.Runner = fakeRunner
+			fakeRunner.Out = buf
+
+			extensions, err := comp.CheckPlatformReqs()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(extensions).To(ConsistOf("kasjadf"))
+		})
 
 	})
 }

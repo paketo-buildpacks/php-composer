@@ -10,7 +10,7 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "php -r 'phpinfo();'"
+            "php -r 'foreach (get_loaded_extensions() as $ext) { print(\"PostInstall [$ext]\\n\"); }'"
         ]
     }
 }

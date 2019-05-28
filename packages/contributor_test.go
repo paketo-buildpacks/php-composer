@@ -2,6 +2,8 @@ package packages
 
 import (
 	"bytes"
+	"github.com/cloudfoundry/libcfbuildpack/helper"
+	"io/ioutil"
 	"math/rand"
 	"path/filepath"
 	"testing"
@@ -101,7 +103,6 @@ func testComposerPackage(t *testing.T, when spec.G, it spec.S) {
 
 	when("a github oauth token is supplied in buildpack.yml", func() {
 		it("runs composer config to make that available to composer", func() {
-
 			fakeRunner := &runner.FakeRunner{}
 			comp := composer.NewComposer(factory.Build.Application.Root, "/tmp", factory.Build.Logger)
 			comp.Runner = fakeRunner
@@ -121,6 +122,26 @@ func testComposerPackage(t *testing.T, when spec.G, it spec.S) {
 
 			Expect(contributor.configureGithubOauthToken()).ToNot(HaveOccurred())
 			Expect(fakeRunner.Arguments).To(ConsistOf("php", filepath.Join("/tmp", composer.ComposerPHAR), "config", "-g", "github-oauth.github.com", "\"qwerty\""))
+		})
+	})
+
+	when("enabling php extensions", func() {
+		it("adds each extension to the .php.ini.d file", func() {
+			Expect(helper.WriteFile(filepath.Join(factory.Build.Application.Root, "composer.json"), 0644, "")).ToNot(HaveOccurred())
+
+			phpinid := filepath.Join(factory.Build.Application.Root, ".php.ini.d")
+			composer_exts := filepath.Join(phpinid, "composer-extensions.ini")
+
+			contributor, willContribute, err := NewContributor(factory.Build, "/tmp")
+			Expect(err).NotTo(HaveOccurred())
+			Expect(willContribute).To(BeTrue())
+			Expect(contributor.enablePHPExtensions([]string{"abcdefg", "qwerty"})).To(Succeed())
+			Expect(composer_exts).To(BeARegularFile())
+
+			contents, err := ioutil.ReadFile(composer_exts)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(string(contents)).To(ContainSubstring("extension = qwerty.so\n"))
+			Expect(string(contents)).To(ContainSubstring("extension = abcdefg.so\n"))
 		})
 	})
 }

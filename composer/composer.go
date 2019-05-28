@@ -1,11 +1,10 @@
 package composer
 
 import (
-	"bufio"
-	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -74,29 +73,25 @@ func (c Composer) Config(key, value string, global bool) error {
 
 // CheckPlatformReqs looks for required extension
 func (c Composer) CheckPlatformReqs() ([]string, error) {
-	// custom runner so we can capture STDOUT
-	buf := bytes.Buffer{}
-	runner := runner.ComposerRunner{Logger: c.Logger, Out: &buf}
 
 	// let Composer tell us what extensions are required
-	err := runner.Run("php", c.workingDir, "check-platform-reqs")
+	output, err := c.Runner.RunWithOutput("php", c.workingDir, c.pharPath, "check-platform-reqs")
 	if err != nil {
-		return []string{}, err
-	}
+		exitError, ok := err.(*exec.ExitError)
 
-	// read out just the list of extensions that are required
-	scanner := bufio.NewScanner(&buf)
-	extensions := []string{}
-	for scanner.Scan() {
-		line := scanner.Text()
-		if strings.HasPrefix(line, "ext-") {
-			exts := strings.Split(line, " ")
-			extensions = append(extensions, exts[0])
+		if !ok || exitError.ExitCode() != 2 {
+			return []string{}, err
 		}
 	}
 
-	if err := scanner.Err(); err != nil {
-		return []string{}, err
+	extensions := []string{}
+	for _, line := range strings.Split(output, "\n") {
+		chunks := strings.Split(strings.TrimSpace(line), " ")
+		extension_name := strings.Trim(strings.TrimSpace(chunks[0]), "ext-")
+		extension_status := strings.TrimSpace(chunks[len(chunks) - 1])
+		if extension_name != "php" && extension_status == "missing" {
+			extensions = append(extensions, extension_name)
+		}
 	}
 
 	return extensions, nil

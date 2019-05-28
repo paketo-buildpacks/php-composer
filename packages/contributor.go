@@ -1,8 +1,10 @@
 package packages
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -103,15 +105,34 @@ func (c Contributor) configureGithubOauthToken() error {
 }
 
 func (c Contributor) contributeComposer(layer layers.Layer) error {
+	php_extensions, err := c.composer.CheckPlatformReqs()
+	if err != nil {
+		return err
+	}
+
+	if err := c.enablePHPExtensions(php_extensions); err != nil {
+		return err
+	}
+
 	// TODO:
 	// Run `composer global require` for all packages set in buildpack.yml
 
-	err := c.warnAboutPublicComposerFiles(layer)
+	err = c.warnAboutPublicComposerFiles(layer)
 	if err != nil {
 		return err
 	}
 
 	return c.composer.Install(c.composerBuildpackYAML.Composer.InstallOptions...)
+}
+
+func (c Contributor) enablePHPExtensions(extensions []string) error {
+	buf := bytes.Buffer{}
+
+	for _, extension := range extensions {
+		buf.WriteString(fmt.Sprintf("extension = %s.so\n", extension))
+	}
+
+	return helper.WriteFile(filepath.Join(c.app.Root, ".php.ini.d", "composer-extensions.ini"), 0655, buf.String())
 }
 
 func (c Contributor) warnAboutPublicComposerFiles(layer layers.Layer) error {
