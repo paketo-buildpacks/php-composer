@@ -53,7 +53,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 
 	when("deploying a basic Composer app", func() {
 		it("it deploys using defaults and installs a package using Composer", func() {
-			app, err = PreparePhpApp("composer_app", buildpacks)
+			app, err = PreparePhpApp("composer_app", buildpacks, false)
 			Expect(err).ToNot(HaveOccurred())
 			defer app.Destroy()
 
@@ -81,7 +81,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 		})
 
 		it("deploys using custom composer setting and installs a package using Composer", func() {
-			app, err = PreparePhpApp("composer_app_custom", buildpacks)
+			app, err = PreparePhpApp("composer_app_custom", buildpacks, false)
 			Expect(err).ToNot(HaveOccurred())
 			defer app.Destroy()
 
@@ -117,7 +117,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 				"mbstring",
 			}
 
-			app, err = PreparePhpApp("composer_app_extensions", buildpacks)
+			app, err = PreparePhpApp("composer_app_extensions", buildpacks, true)
 			Expect(err).ToNot(HaveOccurred())
 			defer app.Destroy()
 
@@ -138,6 +138,9 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 			logs, err := app.Logs()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(logs).To(ContainSubstring("SUCCESS"))
+
+			buildLogs := app.BuildLogs()
+			Expect(buildLogs).To(ContainSubstring("Running `php /layers/org.cloudfoundry.php-composer/php-composer/composer.phar config -g github-oauth.github.com "))
 
 			body, _, err := app.HTTPGet("/")
 			Expect(err).ToNot(HaveOccurred())

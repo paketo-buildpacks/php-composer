@@ -1,6 +1,8 @@
 package integration
 
 import (
+	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/cloudfoundry/dagger"
@@ -32,8 +34,19 @@ func PreparePhpBps() ([]string, error) {
 }
 
 // PreparePhpApp builds the given test app
-func PreparePhpApp(appName string, buildpacks []string) (*dagger.App, error) {
-	app, err := dagger.PackBuild(filepath.Join("testdata", appName), buildpacks...)
+func PreparePhpApp(appName string, buildpacks []string, debug bool) (*dagger.App, error) {
+	env := make(map[string]string)
+	if debug {
+		env["BP_DEBUG"] = "true"
+	}
+
+	githubToken := os.Getenv("GIT_TOKEN")
+	fmt.Println("GITHUB_TOKEN: ", githubToken)
+	if githubToken != "" {
+		env["COMPOSER_GITHUB_OAUTH_TOKEN"] = githubToken
+	}
+
+	app, err := dagger.PackBuildWithEnv(filepath.Join("testdata", appName), env, buildpacks...)
 	if err != nil {
 		return &dagger.App{}, err
 	}

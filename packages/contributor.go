@@ -5,17 +5,16 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"io/ioutil"
-	"math/rand"
-	"os"
-	"path/filepath"
-
 	"github.com/buildpack/libbuildpack/application"
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
 	"github.com/cloudfoundry/php-composer-cnb/composer"
 	"github.com/cloudfoundry/php-web-cnb/phpweb"
+	"io/ioutil"
+	"math/rand"
+	"os"
+	"path/filepath"
 )
 
 type Metadata struct {
@@ -93,14 +92,33 @@ func (c Contributor) Contribute() error {
 }
 
 func (c Contributor) configureGithubOauthToken() error {
-	// TODO: validate github oauth token in un-vendored case
-	// TODO: check rate limiting
-	// See below
-	// TODO: https://github.com/cloudfoundry/php-buildpack/blob/master/extensions/composer/extension.py#L237-L298
+	githubOauthToken := os.Getenv("COMPOSER_GITHUB_OAUTH_TOKEN")
+	if githubOauthToken != "" {
+		github, err := NewDefaultGithub(githubOauthToken)
+		if err != nil {
+			return err
+		}
 
-	if c.composerBuildpackYAML.Composer.GitHubOAUTHToken != "" {
-		return c.composer.Config(composer.GithubOAUTHKey, c.composerBuildpackYAML.Composer.GitHubOAUTHToken, true)
+		if ok, err := github.validateToken(); err != nil {
+			return err
+		} else if ok {
+			if err := c.composer.Config("github-oauth.github.com", githubOauthToken, true); err != nil {
+				return err
+			}
+		}
+
+		if ok, err := github.checkRateLimit(); err != nil {
+			return err
+		} else if !ok {
+			c.composer.Logger.Warning("The GitHub api rate limit has been exceeded. " +
+				"Composer will continue by downloading from source, which might result in slower downloads. " +
+				"You can increase your rate limit with a GitHub OAuth token. " +
+				"Please obtain a GitHub OAuth token by registering your application at " +
+				"https://github.com/settings/applications/new. " +
+				"Then set COMPOSER_GITHUB_OAUTH_TOKEN in your environment to the value of this token.")
+		}
 	}
+
 	return nil
 }
 
@@ -111,6 +129,10 @@ func (c Contributor) contributeComposer(layer layers.Layer) error {
 	}
 
 	if err := c.enablePHPExtensions(php_extensions); err != nil {
+		return err
+	}
+
+	if err := c.configureGithubOauthToken(); err != nil {
 		return err
 	}
 

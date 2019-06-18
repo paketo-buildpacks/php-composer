@@ -8,12 +8,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/cloudfoundry/libcfbuildpack/logger"
-	"github.com/cloudfoundry/php-composer-cnb/composer"
-	"github.com/cloudfoundry/php-composer-cnb/runner"
-
 	bplogger "github.com/buildpack/libbuildpack/logger"
+	"github.com/cloudfoundry/libcfbuildpack/logger"
 	"github.com/cloudfoundry/libcfbuildpack/test"
+	"github.com/cloudfoundry/php-composer-cnb/composer"
 
 	. "github.com/onsi/gomega"
 	"github.com/sclevine/spec"
@@ -98,30 +96,6 @@ func testComposerPackage(t *testing.T, when spec.G, it spec.S) {
 			err = contributor.warnAboutPublicComposerFiles(testLayer)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(info.String()).To(Equal("WARNING: your composer.lock or composer.json files are located in the web directory which could publicly expose them. Please make sure this is really what you want\n"))
-		})
-	})
-
-	when("a github oauth token is supplied in buildpack.yml", func() {
-		it("runs composer config to make that available to composer", func() {
-			fakeRunner := &runner.FakeRunner{}
-			comp := composer.NewComposer(factory.Build.Application.Root, "/tmp", factory.Build.Logger)
-			comp.Runner = fakeRunner
-
-			contributor := Contributor{
-				app:              factory.Build.Application,
-				composerLayer:    factory.Build.Layers.Layer("composer"),
-				cacheLayer:       factory.Build.Layers.Layer("cache"),
-				composerMetadata: Metadata{},
-				composer:         comp,
-				composerBuildpackYAML: composer.BuildpackYAML{
-					Composer: composer.ComposerConfig{
-						GitHubOAUTHToken: "qwerty",
-					},
-				},
-			}
-
-			Expect(contributor.configureGithubOauthToken()).ToNot(HaveOccurred())
-			Expect(fakeRunner.Arguments).To(ConsistOf("php", filepath.Join("/tmp", composer.ComposerPHAR), "config", "-g", "github-oauth.github.com", "\"qwerty\""))
 		})
 	})
 

@@ -67,7 +67,7 @@ func (c Composer) Config(key, value string, global bool) error {
 	if global {
 		args = append(args, "-g")
 	}
-	args = append(args, key, fmt.Sprintf(`"%s"`, value))
+	args = append(args, key, value)
 	return c.Runner.Run("php", c.workingDir, args...)
 }
 
@@ -133,7 +133,6 @@ type ComposerConfig struct {
 	InstallOptions   []string `yaml:"install_options"`
 	VendorDirectory  string   `yaml:"vendor_directory"`
 	JsonPath         string   `yaml:"json_path"`
-	GitHubOAUTHToken string   `yaml:"github_oauth_token"`
 }
 
 type BuildpackYAML struct {
