@@ -133,6 +133,7 @@ type ComposerConfig struct {
 	InstallOptions   []string `yaml:"install_options"`
 	VendorDirectory  string   `yaml:"vendor_directory"`
 	JsonPath         string   `yaml:"json_path"`
+	InstallGlobal		 []string `yaml:"install_global"`
 }
 
 type BuildpackYAML struct {

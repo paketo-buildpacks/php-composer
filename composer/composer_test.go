@@ -141,6 +141,14 @@ func testComposer(t *testing.T, when spec.G, it spec.S) {
 			Expect(bpYaml.Composer.VendorDirectory).To(Equal("somedir"))
 			Expect(bpYaml.Composer.InstallOptions).To(ConsistOf("one", "two", "three"))
 		})
+
+		it("loads and parses the file with install_global", func() {
+			test.WriteFile(t, filepath.Join(factory.Build.Application.Root, "buildpack.yml"), `{"composer": {"install_global": ["one", "two", "three"]}}`)
+
+			bpYaml, err := LoadComposerBuildpackYAML(factory.Build.Application.Root)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(bpYaml.Composer.InstallGlobal).To(ConsistOf("one", "two", "three"))
+		})
 	})
 
 	when("there are PHP extensions listed in composer.json", func() {

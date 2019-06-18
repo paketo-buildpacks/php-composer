@@ -66,11 +66,14 @@ func NewContributor(context build.Build, composerPharPath string) (Contributor, 
 	}
 
 	contributor := Contributor{
-		app:              context.Application,
-		composerLayer:    context.Layers.Layer(composer.Dependency),
-		cacheLayer:       context.Layers.Layer(composer.CacheDependency),
-		composerMetadata: Metadata{"PHP Composer", hex.EncodeToString(hash[:])},
-		composer:         composer.NewComposer(composerDir, composerPharPath, context.Logger),
+		app:                   context.Application,
+		// TODO: review the way layers are used here (composer binary & packages are written to same layer
+		// TODO: also review layer caching to make sure that is OK with installing global & composer packages
+		composerLayer:         context.Layers.Layer(composer.Dependency),
+		cacheLayer:            context.Layers.Layer(composer.CacheDependency),
+		composerMetadata:      Metadata{"PHP Composer", hex.EncodeToString(hash[:])},
+		composer:              composer.NewComposer(composerDir, composerPharPath, context.Logger),
+		composerBuildpackYAML: buildpackYAML,
 	}
 
 	if err := contributor.initializeEnv(buildpackYAML.Composer.VendorDirectory); err != nil {
@@ -136,8 +139,11 @@ func (c Contributor) contributeComposer(layer layers.Layer) error {
 		return err
 	}
 
-	// TODO:
-	// Run `composer global require` for all packages set in buildpack.yml
+	if len(c.composerBuildpackYAML.Composer.InstallGlobal) > 0 {
+		if err := c.composer.Global(c.composerBuildpackYAML.Composer.InstallGlobal...); err != nil {
+			return err
+		}
+	}
 
 	err = c.warnAboutPublicComposerFiles(layer)
 	if err != nil {

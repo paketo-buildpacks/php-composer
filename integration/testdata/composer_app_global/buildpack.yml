@@ -1,0 +1,7 @@
+---
+php:
+  webserver: php-server
+composer:
+  install_global:
+  - friendsofphp/php-cs-fixer
+  - fxp/composer-asset-plugin:~1.3

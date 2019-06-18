@@ -1,0 +1,9 @@
+{
+    "require": {
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "php-cs-fixer -h && echo \"POSTSCRIPT OK\" "
+        ]
+    }
+}

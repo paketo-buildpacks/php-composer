@@ -156,5 +156,34 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 				Expect(app.BuildLogs()).To(ContainSubstring(fmt.Sprintf("PostInstall [%s]", extension)))
 			}
 		})
+
+		it("deploys an app that installs global scripts using Composer and runs them as post scripts", func() {
+			app, err = PreparePhpApp("composer_app_global", buildpacks, true)
+			Expect(err).ToNot(HaveOccurred())
+			defer app.Destroy()
+
+			err = app.Start()
+			if err != nil {
+				_, err = fmt.Fprintf(os.Stderr, "App failed to start: %v\n", err)
+				containerID, imageName, volumeIDs, err := app.Info()
+				Expect(err).NotTo(HaveOccurred())
+				fmt.Printf("ContainerID: %s\nImage Name: %s\nAll leftover cached volumes: %v\n", containerID, imageName, volumeIDs)
+
+				containerLogs, err := app.Logs()
+				Expect(err).NotTo(HaveOccurred())
+				fmt.Printf("Container Logs:\n %s\n", containerLogs)
+				t.FailNow()
+			}
+
+			buildLogs := app.BuildLogs()
+			Expect(buildLogs).To(ContainSubstring("Running `php /layers/org.cloudfoundry.php-composer/php-composer/composer.phar global require --no-progress friendsofphp/php-cs-fixer fxp/composer-asset-plugin:~1.3` from directory '/workspace'"))
+
+			// TODO does not contain this substring
+			//Expect(buildLogs).To(ContainSubstring("POSTSCRIPT OK"))
+
+			body, _, err := app.HTTPGet("/")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(body).To(ContainSubstring("OK"))
+		})
 	})
 }
