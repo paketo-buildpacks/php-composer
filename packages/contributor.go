@@ -5,16 +5,18 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"io/ioutil"
+	"math/rand"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/buildpack/libbuildpack/application"
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
 	"github.com/cloudfoundry/php-composer-cnb/composer"
 	"github.com/cloudfoundry/php-web-cnb/phpweb"
-	"io/ioutil"
-	"math/rand"
-	"os"
-	"path/filepath"
 )
 
 type Metadata struct {
@@ -66,7 +68,7 @@ func NewContributor(context build.Build, composerPharPath string) (Contributor, 
 	}
 
 	contributor := Contributor{
-		app:                   context.Application,
+		app: context.Application,
 		// TODO: review the way layers are used here (composer binary & packages are written to same layer
 		// TODO: also review layer caching to make sure that is OK with installing global & composer packages
 		composerLayer:         context.Layers.Layer(composer.Dependency),
@@ -125,6 +127,25 @@ func (c Contributor) configureGithubOauthToken() error {
 	return nil
 }
 
+func (c Contributor) installGlobalPackages() error {
+	if len(c.composerBuildpackYAML.Composer.InstallGlobal) > 0 {
+		binPath := strings.Join([]string{os.Getenv("PATH"), filepath.Join(c.composerLayer.Root, "vendor/bin")}, string(os.PathListSeparator))
+		err := os.Setenv("PATH", binPath)
+		if err != nil {
+			return err
+		}
+
+		if err := c.setGlobalVendorDir(); err != nil {
+			return err
+		}
+
+		if err := c.composer.Global(c.composerBuildpackYAML.Composer.InstallGlobal...); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (c Contributor) contributeComposer(layer layers.Layer) error {
 	php_extensions, err := c.composer.CheckPlatformReqs()
 	if err != nil {
@@ -139,10 +160,8 @@ func (c Contributor) contributeComposer(layer layers.Layer) error {
 		return err
 	}
 
-	if len(c.composerBuildpackYAML.Composer.InstallGlobal) > 0 {
-		if err := c.composer.Global(c.composerBuildpackYAML.Composer.InstallGlobal...); err != nil {
-			return err
-		}
+	if err := c.installGlobalPackages(); err != nil {
+		return err
 	}
 
 	err = c.warnAboutPublicComposerFiles(layer)
@@ -150,6 +169,9 @@ func (c Contributor) contributeComposer(layer layers.Layer) error {
 		return err
 	}
 
+	if err := c.setAppVendorDir(); err != nil {
+		return err
+	}
 	return c.composer.Install(c.composerBuildpackYAML.Composer.InstallOptions...)
 }
 
@@ -205,11 +227,6 @@ func (c Contributor) initializeEnv(vendorDirectory string) error {
 		return err
 	}
 
-	err = os.Setenv("COMPOSER_VENDOR_DIR", filepath.Join(c.app.Root, vendorDirectory))
-	if err != nil {
-		return err
-	}
-
 	err = os.Setenv("PHPRC", filepath.Join(c.composerLayer.Root, "composer-php.ini"))
 	if err != nil {
 		return err
@@ -220,5 +237,27 @@ func (c Contributor) initializeEnv(vendorDirectory string) error {
 		return err
 	}
 
+	binPath := strings.Join([]string{os.Getenv("PATH"), filepath.Join(c.app.Root, c.composerBuildpackYAML.Composer.VendorDirectory, "bin")}, string(os.PathListSeparator))
+	err = os.Setenv("PATH", binPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c Contributor) setGlobalVendorDir() error {
+	err := os.Setenv("COMPOSER_VENDOR_DIR", filepath.Join(c.composerLayer.Root, "vendor"))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c Contributor) setAppVendorDir() error {
+	err := os.Setenv("COMPOSER_VENDOR_DIR", filepath.Join(c.app.Root, c.composerBuildpackYAML.Composer.VendorDirectory))
+	if err != nil {
+		return err
+	}
 	return nil
 }
