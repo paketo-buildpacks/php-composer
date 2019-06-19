@@ -1,7 +1,6 @@
 package integration
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -41,7 +40,6 @@ func PreparePhpApp(appName string, buildpacks []string, debug bool) (*dagger.App
 	}
 
 	githubToken := os.Getenv("GIT_TOKEN")
-	fmt.Println("GITHUB_TOKEN: ", githubToken)
 	if githubToken != "" {
 		env["COMPOSER_GITHUB_OAUTH_TOKEN"] = githubToken
 	}
