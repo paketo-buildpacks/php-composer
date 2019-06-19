@@ -1,9 +1,11 @@
 {
     "require": {
+        "monolog/monolog": "^1.24",
+        "php": ">=7.1"
     },
     "scripts": {
         "post-install-cmd": [
-            "php-cs-fixer -h && echo \"POSTSCRIPT OK\" "
+            "php-cs-fixer -h"
         ]
     }
 }

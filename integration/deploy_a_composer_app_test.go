@@ -109,7 +109,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 		})
 
 		it("deploys an app that has PHP extensions specified in composer.json", func() {
-			ExpectedExtensions := []string {
+			ExpectedExtensions := []string{
 				"zip",
 				"gd",
 				"fileinfo",
@@ -178,8 +178,8 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 			buildLogs := app.BuildLogs()
 			Expect(buildLogs).To(ContainSubstring("Running `php /layers/org.cloudfoundry.php-composer/php-composer/composer.phar global require --no-progress friendsofphp/php-cs-fixer fxp/composer-asset-plugin:~1.3` from directory '/workspace'"))
 
-			// TODO does not contain this substring
-			//Expect(buildLogs).To(ContainSubstring("POSTSCRIPT OK"))
+			Expect(buildLogs).To(ContainSubstring("php-cs-fixer -h"))
+			Expect(buildLogs).To(ContainSubstring("php /layers/org.cloudfoundry.php-composer/php-composer/vendor/bin/php-cs-fixer list"))
 
 			body, _, err := app.HTTPGet("/")
 			Expect(err).ToNot(HaveOccurred())
