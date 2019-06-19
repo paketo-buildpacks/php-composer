@@ -100,6 +100,29 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 		})
 	})
 
+	when("there is a composer.json and a composer.lock and neither have a php version", func() {
+		var (
+			compsoserPath    string
+			composerLockPath string
+		)
+
+		it.Before(func() {
+			composerJSONString := `{"require": {}}`
+			compsoserPath = filepath.Join(factory.Detect.Application.Root, composer.ComposerJSON)
+			test.WriteFile(t, compsoserPath, composerJSONString)
+
+			composerLockString := `{"platform": []}`
+			composerLockPath = filepath.Join(factory.Detect.Application.Root, composer.ComposerLock)
+			test.WriteFile(t, composerLockPath, composerLockString)
+		})
+
+		it("should not fail, but just pick latest PHP", func() {
+			version, err := findPHPVersion(compsoserPath, factory.Detect.Logger)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(version).To(Equal(""))
+		})
+	})
+
 	when("composer is being used", func() {
 		const VERSION string = "1.2.3"
 		var compsoserPath string

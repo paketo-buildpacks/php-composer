@@ -102,6 +102,7 @@ func parseComposerLock(path string) (string, error) {
 		return "", err
 	}
 
+	// Composer.lock -> platform can be a dict or an array
 	type composerLockPlatform struct {
 		Php string `json:"php"`
 	}
@@ -111,6 +112,11 @@ func parseComposerLock(path string) (string, error) {
 	}{}
 
 	if err := json.Unmarshal(buf, &composerLock); err != nil {
+		// this happens when it's an array, which doesn't tell us the PHP version
+		// return empty string to accept default PHP version & don't error
+		if err.Error() == "json: cannot unmarshal array into Go struct field .platform of type main.composerLockPlatform" {
+			return "", nil
+		}
 		return "", err
 	}
 
