@@ -1,19 +1,19 @@
 package composer
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
 	"github.com/cloudfoundry/php-cnb/php"
 	"github.com/cloudfoundry/php-web-cnb/config"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 type Contributor struct {
 	ComposerLayer     layers.DependencyLayer
-	PhpLayer					layers.Layer
+	PhpLayer          layers.Layer
 	buildContribution bool
 }
 
@@ -35,7 +35,7 @@ func NewContributor(builder build.Build) (Contributor, bool, error) {
 
 	contributor := Contributor{
 		ComposerLayer: builder.Layers.DependencyLayer(dep),
-		PhpLayer: builder.Layers.Layer(php.Dependency),
+		PhpLayer:      builder.Layers.Layer(php.Dependency),
 	}
 
 	if _, ok := plan.Metadata["build"]; ok {
@@ -50,13 +50,6 @@ func (n Contributor) Contribute() error {
 		layer.Logger.SubsequentLine("Expanding to %s", layer.Root)
 
 		err := helper.CopyFile(artifact, filepath.Join(layer.Root, ComposerPHAR))
-		if err != nil {
-			return err
-		}
-
-		// add to current path so it's accessible by the rest of this buildpack
-		newPath := strings.Join([]string{ os.Getenv("PATH"), filepath.Join(layer.Root, "bin")}, string(os.PathListSeparator))
-		err = os.Setenv("PATH", newPath)
 		if err != nil {
 			return err
 		}
@@ -78,8 +71,8 @@ func (n Contributor) flags() []layers.Flag {
 
 func (n Contributor) writePhpIni() error {
 	phpIniCfg := config.PhpIniConfig{
-		PhpHome:      os.Getenv("PHP_HOME"),
-		PhpAPI:       os.Getenv("PHP_API"),
+		PhpHome: os.Getenv("PHP_HOME"),
+		PhpAPI:  os.Getenv("PHP_API"),
 		Extensions: []string{
 			"openssl",
 			"zlib",
