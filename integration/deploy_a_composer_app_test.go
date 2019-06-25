@@ -19,6 +19,7 @@ package integration
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/cloudfoundry/dagger"
@@ -179,11 +180,39 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 			Expect(buildLogs).To(ContainSubstring("Running `php /layers/org.cloudfoundry.php-composer/php-composer/composer.phar global require --no-progress friendsofphp/php-cs-fixer fxp/composer-asset-plugin:~1.3` from directory '/workspace'"))
 
 			Expect(buildLogs).To(ContainSubstring("php-cs-fixer -h"))
-			Expect(buildLogs).To(ContainSubstring("php /layers/org.cloudfoundry.php-composer/php-composer/vendor/bin/php-cs-fixer list"))
+			Expect(buildLogs).To(ContainSubstring("php /layers/org.cloudfoundry.php-composer/php-composer-packages/global/vendor/bin/php-cs-fixer list"))
 
 			body, _, err := app.HTTPGet("/")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(body).To(ContainSubstring("OK"))
+		})
+
+		when("the app is pushed twice", func() {
+			it("does not reinstall composer packages", func() {
+				appName := "composer_app_extensions"
+				debug := false
+				app, err := PreparePhpApp(appName, buildpacks, debug)
+				Expect(err).ToNot(HaveOccurred())
+				defer app.Destroy()
+
+				Expect(app.BuildLogs()).To(MatchRegexp("Package operations: \\d+ install"))
+
+				app, err = dagger.PackBuildNamedImageWithEnv(app.ImageName, filepath.Join("testdata", appName), MakeBuildEnv(debug), buildpacks...)
+
+				Expect(app.BuildLogs()).To(MatchRegexp("PHP Composer \\S+: Reusing cached layer"))
+				Expect(app.BuildLogs()).NotTo(MatchRegexp("PHP Composer \\S+: Contributing to layer"))
+
+				Expect(app.Start()).To(Succeed())
+
+				// ensure composer library is available & functions
+				logs, err := app.Logs()
+				Expect(err).ToNot(HaveOccurred())
+				Expect(logs).To(ContainSubstring("SUCCESS"))
+
+				body, _, err := app.HTTPGet("/")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(body).To(ContainSubstring("OK"))
+			})
 		})
 	})
 }

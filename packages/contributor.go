@@ -31,10 +31,17 @@ func (m Metadata) Identity() (name string, version string) {
 type Contributor struct {
 	app                   application.Application
 	composerLayer         layers.Layer
+	composerPackagesLayer layers.Layer
 	cacheLayer            layers.Layer
 	composerMetadata      Metadata
 	composer              composer.Composer
 	composerBuildpackYAML composer.BuildpackYAML
+}
+
+func generateRandomHash() [32]byte {
+	randBuf := make([]byte, 512)
+	rand.Read(randBuf)
+	return sha256.Sum256(randBuf)
 }
 
 // NewContributor creates a new "packages" contributor for installing Composer packages
@@ -62,16 +69,13 @@ func NewContributor(context build.Build, composerPharPath string) (Contributor, 
 
 		hash = sha256.Sum256(buf)
 	} else {
-		randBuf := make([]byte, 512)
-		rand.Read(randBuf)
-		hash = sha256.Sum256(randBuf)
+		hash = generateRandomHash()
 	}
 
 	contributor := Contributor{
-		app: context.Application,
-		// TODO: review the way layers are used here (composer binary & packages are written to same layer
-		// TODO: also review layer caching to make sure that is OK with installing global & composer packages
+		app:                   context.Application,
 		composerLayer:         context.Layers.Layer(composer.Dependency),
+		composerPackagesLayer: context.Layers.Layer(composer.PackagesDependency),
 		cacheLayer:            context.Layers.Layer(composer.CacheDependency),
 		composerMetadata:      Metadata{"PHP Composer", hex.EncodeToString(hash[:])},
 		composer:              composer.NewComposer(composerDir, composerPharPath, context.Logger),
@@ -86,14 +90,24 @@ func NewContributor(context build.Build, composerPharPath string) (Contributor, 
 }
 
 func (c Contributor) Contribute() error {
-	if err := c.composerLayer.Contribute(nil, c.contributeComposer, layers.Build); err != nil {
+	randomHash := generateRandomHash()
+	if err := c.cacheLayer.Contribute(Metadata{"PHP Composer Cache", hex.EncodeToString(randomHash[:])}, func(layer layers.Layer) error { return nil }, layers.Cache); err != nil {
 		return err
 	}
 
-	// This layer doesn't need to do anything; Only holds downloaded PHP packages from composer
-	return c.cacheLayer.Contribute(c.composerMetadata, func(layer layers.Layer) error {
-		return nil
-	}, layers.Cache)
+	if err := c.alwaysRunComposerInit(c.composerPackagesLayer); err != nil {
+		return err
+	}
+
+	packagesFlags := []layers.Flag{layers.Launch}
+
+	if err := c.composerPackagesLayer.Contribute(c.composerMetadata, c.contributeComposerPackages, packagesFlags...); err != nil {
+		return err
+	}
+
+	// symlink vendor_home to "vendor" under the app root so PHP apps can find Composer dependencies
+	return helper.WriteSymlink(filepath.Join(c.composerPackagesLayer.Root, c.composerBuildpackYAML.Composer.VendorDirectory),
+		filepath.Join(c.app.Root, c.composerBuildpackYAML.Composer.VendorDirectory))
 }
 
 func (c Contributor) configureGithubOauthToken() error {
@@ -129,7 +143,7 @@ func (c Contributor) configureGithubOauthToken() error {
 
 func (c Contributor) installGlobalPackages() error {
 	if len(c.composerBuildpackYAML.Composer.InstallGlobal) > 0 {
-		binPath := strings.Join([]string{os.Getenv("PATH"), filepath.Join(c.composerLayer.Root, "vendor/bin")}, string(os.PathListSeparator))
+		binPath := strings.Join([]string{os.Getenv("PATH"), filepath.Join(c.composerPackagesLayer.Root, "global/vendor/bin")}, string(os.PathListSeparator))
 		err := os.Setenv("PATH", binPath)
 		if err != nil {
 			return err
@@ -146,13 +160,13 @@ func (c Contributor) installGlobalPackages() error {
 	return nil
 }
 
-func (c Contributor) contributeComposer(layer layers.Layer) error {
-	php_extensions, err := c.composer.CheckPlatformReqs()
+func (c Contributor) alwaysRunComposerInit(layer layers.Layer) error {
+	phpExtensions, err := c.composer.CheckPlatformReqs()
 	if err != nil {
 		return err
 	}
 
-	if err := c.enablePHPExtensions(php_extensions); err != nil {
+	if err := c.enablePHPExtensions(phpExtensions); err != nil {
 		return err
 	}
 
@@ -169,9 +183,14 @@ func (c Contributor) contributeComposer(layer layers.Layer) error {
 		return err
 	}
 
-	if err := c.setAppVendorDir(); err != nil {
+	return c.setAppVendorDir()
+}
+
+func (c Contributor) contributeComposerPackages(layer layers.Layer) error {
+	if err := os.MkdirAll(layer.Root, os.ModePerm); err != nil {
 		return err
 	}
+
 	return c.composer.Install(c.composerBuildpackYAML.Composer.InstallOptions...)
 }
 
@@ -247,7 +266,7 @@ func (c Contributor) initializeEnv(vendorDirectory string) error {
 }
 
 func (c Contributor) setGlobalVendorDir() error {
-	err := os.Setenv("COMPOSER_VENDOR_DIR", filepath.Join(c.composerLayer.Root, "vendor"))
+	err := os.Setenv("COMPOSER_VENDOR_DIR", filepath.Join(c.composerPackagesLayer.Root, "global", "vendor"))
 	if err != nil {
 		return err
 	}
@@ -255,7 +274,7 @@ func (c Contributor) setGlobalVendorDir() error {
 }
 
 func (c Contributor) setAppVendorDir() error {
-	err := os.Setenv("COMPOSER_VENDOR_DIR", filepath.Join(c.app.Root, c.composerBuildpackYAML.Composer.VendorDirectory))
+	err := os.Setenv("COMPOSER_VENDOR_DIR", filepath.Join(c.composerPackagesLayer.Root, c.composerBuildpackYAML.Composer.VendorDirectory))
 	if err != nil {
 		return err
 	}

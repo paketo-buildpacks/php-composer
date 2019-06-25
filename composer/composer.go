@@ -16,12 +16,13 @@ import (
 )
 
 const (
-	Dependency      = "php-composer"
-	CacheDependency = "php-composer-cache"
-	ComposerLock    = "composer.lock"
-	ComposerJSON    = "composer.json"
-	ComposerPHAR    = "composer.phar"
-	GithubOAUTHKey  = "github-oauth.github.com"
+	Dependency         = "php-composer"
+	PackagesDependency = "php-composer-packages"
+	CacheDependency    = "php-composer-cache"
+	ComposerLock       = "composer.lock"
+	ComposerJSON       = "composer.json"
+	ComposerPHAR       = "composer.phar"
+	GithubOAUTHKey     = "github-oauth.github.com"
 )
 
 // Composer runner
@@ -88,7 +89,7 @@ func (c Composer) CheckPlatformReqs() ([]string, error) {
 	for _, line := range strings.Split(output, "\n") {
 		chunks := strings.Split(strings.TrimSpace(line), " ")
 		extension_name := strings.Trim(strings.TrimSpace(chunks[0]), "ext-")
-		extension_status := strings.TrimSpace(chunks[len(chunks) - 1])
+		extension_status := strings.TrimSpace(chunks[len(chunks)-1])
 		if extension_name != "php" && extension_status == "missing" {
 			extensions = append(extensions, extension_name)
 		}
@@ -129,11 +130,11 @@ func FindComposer(appRoot string, composerJSONPath string) (string, error) {
 }
 
 type ComposerConfig struct {
-	Version          string   `yaml:"version"`
-	InstallOptions   []string `yaml:"install_options"`
-	VendorDirectory  string   `yaml:"vendor_directory"`
-	JsonPath         string   `yaml:"json_path"`
-	InstallGlobal		 []string `yaml:"install_global"`
+	Version         string   `yaml:"version"`
+	InstallOptions  []string `yaml:"install_options"`
+	VendorDirectory string   `yaml:"vendor_directory"`
+	JsonPath        string   `yaml:"json_path"`
+	InstallGlobal   []string `yaml:"install_global"`
 }
 
 type BuildpackYAML struct {

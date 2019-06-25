@@ -32,8 +32,8 @@ func PreparePhpBps() ([]string, error) {
 	return []string{phpBp, composerBp, phpWebBp}, nil
 }
 
-// PreparePhpApp builds the given test app
-func PreparePhpApp(appName string, buildpacks []string, debug bool) (*dagger.App, error) {
+// MakeBuildEnv creates a build environment map
+func MakeBuildEnv(debug bool) map[string]string {
 	env := make(map[string]string)
 	if debug {
 		env["BP_DEBUG"] = "true"
@@ -44,7 +44,13 @@ func PreparePhpApp(appName string, buildpacks []string, debug bool) (*dagger.App
 		env["COMPOSER_GITHUB_OAUTH_TOKEN"] = githubToken
 	}
 
-	app, err := dagger.PackBuildWithEnv(filepath.Join("testdata", appName), env, buildpacks...)
+	return env
+}
+
+// PreparePhpApp builds the given test app
+func PreparePhpApp(appName string, buildpacks []string, debug bool) (*dagger.App, error) {
+
+	app, err := dagger.PackBuildWithEnv(filepath.Join("testdata", appName), MakeBuildEnv(debug), buildpacks...)
 	if err != nil {
 		return &dagger.App{}, err
 	}
