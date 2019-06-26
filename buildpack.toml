@@ -2,7 +2,7 @@
 [buildpack]
 id = "org.cloudfoundry.php-composer"
 name = "PHP Composer Buildpack"
-version = "0.0.1"
+version = "0.0.2"
 
 [metadata]
 include_files = ["bin/build","bin/detect","buildpack.toml"]
