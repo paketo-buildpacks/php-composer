@@ -3,4 +3,5 @@
 .bin
 *.tgz
 php-composer-cnb_*
-bin/
+/bin/
+/buildpack.toml

@@ -39,7 +39,7 @@ func TestIntegrationComposerApp(t *testing.T) {
 	Expect(err).ToNot(HaveOccurred())
 	defer func() {
 		for _, buildpack := range buildpacks {
-			os.RemoveAll(buildpack)
+			dagger.DeleteBuildpack(buildpack)
 		}
 	}()
 
