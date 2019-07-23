@@ -26,7 +26,7 @@ func main() {
 }
 
 func runBuild(context build.Build) (int, error) {
-	context.Logger.FirstLine(context.Logger.PrettyIdentity(context.Buildpack))
+	context.Logger.Title(context.Buildpack)
 
 	composerContributor, willContributeComposer, err := composer.NewContributor(context)
 	if err != nil {
@@ -44,7 +44,7 @@ func runBuild(context build.Build) (int, error) {
 			return context.Failure(104), err
 		}
 
-		if ! willContributePackages {
+		if !willContributePackages {
 			// should always run if composer is being installed
 			return context.Failure(105), err
 		}
