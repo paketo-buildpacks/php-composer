@@ -2,11 +2,12 @@ package main
 
 import (
 	"bytes"
-	"github.com/buildpack/libbuildpack/buildplan"
-	"github.com/cloudfoundry/libcfbuildpack/logger"
-	"github.com/cloudfoundry/php-cnb/php"
 	"path/filepath"
 	"testing"
+
+	"github.com/buildpack/libbuildpack/buildplan"
+	"github.com/cloudfoundry/libcfbuildpack/logger"
+	"github.com/cloudfoundry/php-dist-cnb/php"
 
 	"github.com/cloudfoundry/libcfbuildpack/detect"
 	"github.com/cloudfoundry/libcfbuildpack/test"

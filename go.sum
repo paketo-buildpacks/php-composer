@@ -28,6 +28,8 @@ github.com/cloudfoundry/libcfbuildpack v1.79.1-0.20190730020126-e0a6cc8afb24/go.
 github.com/cloudfoundry/php-cnb v0.0.1/go.mod h1:TedI99B+atmRGenhsCa1yuwtaIIQDzXqUm4TB4cthc4=
 github.com/cloudfoundry/php-cnb v0.0.2 h1:9K+mqBT0f+yxKac0bfj/okD3H2R6dbFG269c0jiZHSU=
 github.com/cloudfoundry/php-cnb v0.0.2/go.mod h1:wmL8/TWUhD4B6ssS3Lh+JuQLCNtqFxXC78cNF7T0Zuo=
+github.com/cloudfoundry/php-dist-cnb v0.0.15 h1:jA351Fdi2yOvXJF4+HUVkEi75ngnA+7KTRzxqIrhqlg=
+github.com/cloudfoundry/php-dist-cnb v0.0.15/go.mod h1:sZEOcXI+kZ4vfcS1MiPmhyglMFKR6A/NVzlGzzr3x5w=
 github.com/cloudfoundry/php-web-cnb v0.0.4-0.20190521210427-71ed2708047b h1:66e6bqefjpdlmxiounG18cHyRGzyFzKk5aBGkWdqLyo=
 github.com/cloudfoundry/php-web-cnb v0.0.4-0.20190521210427-71ed2708047b/go.mod h1:0w2D4sCfRjsGBOlxMjnxE+sjyHPCfaHwbUoaSSninE8=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
@@ -40,6 +42,7 @@ github.com/golang/protobuf v1.3.1 h1:YF8+flBXS5eO826T4nzqPrxfhQThhXl0YzfuUPu4SBg
 github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/golang/protobuf v1.3.2 h1:6nsPYzhq5kReh6QImI3k5qWzO4PEbvbIW2cwSfR/6xs=
 github.com/golang/protobuf v1.3.2/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
+github.com/google/go-cmp v0.3.0/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
 github.com/google/go-github v17.0.0+incompatible h1:N0LgJ1j65A7kfXrZnUDaYCs/Sf4rEjNlfyDHW9dolSY=
 github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+umXrS52loVEgC2AApnigrVQ=
 github.com/google/go-github/v24 v24.0.1/go.mod h1:CRqaW1Uns1TCkP0wqTpxYyRxRjxwvKU/XSS44u6X74M=
