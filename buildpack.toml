@@ -18,6 +18,15 @@ uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.8.6-
 version = "1.8.6"
 
 [[metadata.dependencies]]
+id = "composer"
+sha256 = "1126fd7501ae6ff1dc9f91f0a3eca7430b1ea060d018d21521dc5e2d1ba01606"
+source = "https://github.com/composer/composer/releases/download/1.9.0/composer.phar"
+source_sha256 = "1126fd7501ae6ff1dc9f91f0a3eca7430b1ea060d018d21521dc5e2d1ba01606"
+stacks = ["org.cloudfoundry.stacks.cflinuxfs3","io.buildpacks.stacks.bionic"]
+uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.9.0-1126fd75.phar"
+version = "1.9.0"
+
+[[metadata.dependencies]]
 id = "php-composer"
 name = "Composer"
 sha256 = "23b29b1a921b56db3c12ba531752dffcfaa3de0fcece3e54974e06990e46bbf9"
