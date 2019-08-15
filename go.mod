@@ -3,9 +3,9 @@ module github.com/cloudfoundry/php-composer-cnb
 go 1.12
 
 require (
-	github.com/buildpack/libbuildpack v1.20.0
+	github.com/buildpack/libbuildpack v1.21.0
 	github.com/cloudfoundry/dagger v0.0.0-20190813205748-e53989179538
-	github.com/cloudfoundry/libcfbuildpack v1.79.1-0.20190802164909-f8808a55c67b
+	github.com/cloudfoundry/libcfbuildpack v1.83.0
 	github.com/cloudfoundry/php-dist-cnb v0.0.15
 	github.com/cloudfoundry/php-web-cnb v0.0.4-0.20190521210427-71ed2708047b
 	github.com/onsi/gomega v1.5.0
