@@ -52,11 +52,16 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 		err error
 	)
 
+	it.After(func() {
+		if app != nil {
+			app.Destroy()
+		}
+	})
+
 	when("deploying a basic Composer app", func() {
 		it("it deploys using defaults and installs a package using Composer", func() {
 			app, err = PreparePhpApp("composer_app", buildpacks, false)
 			Expect(err).ToNot(HaveOccurred())
-			defer app.Destroy()
 
 			err = app.Start()
 			if err != nil {
@@ -84,7 +89,6 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 		it("deploys using custom composer setting and installs a package using Composer", func() {
 			app, err = PreparePhpApp("composer_app_custom", buildpacks, false)
 			Expect(err).ToNot(HaveOccurred())
-			defer app.Destroy()
 
 			err = app.Start()
 			if err != nil {
@@ -120,7 +124,6 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 
 			app, err = PreparePhpApp("composer_app_extensions", buildpacks, true)
 			Expect(err).ToNot(HaveOccurred())
-			defer app.Destroy()
 
 			err = app.Start()
 			if err != nil {
@@ -161,7 +164,6 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 		it("deploys an app that installs global scripts using Composer and runs them as post scripts", func() {
 			app, err = PreparePhpApp("composer_app_global", buildpacks, true)
 			Expect(err).ToNot(HaveOccurred())
-			defer app.Destroy()
 
 			err = app.Start()
 			if err != nil {
@@ -193,7 +195,6 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 				debug := false
 				app, err := PreparePhpApp(appName, buildpacks, debug)
 				Expect(err).ToNot(HaveOccurred())
-				defer app.Destroy()
 
 				Expect(app.BuildLogs()).To(MatchRegexp("Package operations: \\d+ install"))
 

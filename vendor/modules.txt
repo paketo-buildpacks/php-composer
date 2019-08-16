@@ -5,13 +5,13 @@ github.com/Masterminds/semver
 # github.com/buildpack/libbuildpack v1.21.0
 github.com/buildpack/libbuildpack/buildplan
 github.com/buildpack/libbuildpack/application
-github.com/buildpack/libbuildpack/internal
 github.com/buildpack/libbuildpack/build
 github.com/buildpack/libbuildpack/layers
+github.com/buildpack/libbuildpack/internal
+github.com/buildpack/libbuildpack/buildpackplan
 github.com/buildpack/libbuildpack/detect
 github.com/buildpack/libbuildpack/logger
 github.com/buildpack/libbuildpack/buildpack
-github.com/buildpack/libbuildpack/buildpackplan
 github.com/buildpack/libbuildpack/platform
 github.com/buildpack/libbuildpack/services
 github.com/buildpack/libbuildpack/stack
@@ -19,21 +19,19 @@ github.com/buildpack/libbuildpack/stack
 github.com/cloudfoundry/dagger
 # github.com/cloudfoundry/libcfbuildpack v1.83.0
 github.com/cloudfoundry/libcfbuildpack/build
+github.com/cloudfoundry/libcfbuildpack/buildpackplan
 github.com/cloudfoundry/libcfbuildpack/detect
 github.com/cloudfoundry/libcfbuildpack/helper
 github.com/cloudfoundry/libcfbuildpack/logger
 github.com/cloudfoundry/libcfbuildpack/layers
 github.com/cloudfoundry/libcfbuildpack/buildpack
-github.com/cloudfoundry/libcfbuildpack/buildpackplan
 github.com/cloudfoundry/libcfbuildpack/runner
 github.com/cloudfoundry/libcfbuildpack/services
 github.com/cloudfoundry/libcfbuildpack/test
 github.com/cloudfoundry/libcfbuildpack/internal
-# github.com/cloudfoundry/php-cnb v0.0.2
-github.com/cloudfoundry/php-cnb/php
-# github.com/cloudfoundry/php-dist-cnb v0.0.15
+# github.com/cloudfoundry/php-dist-cnb v0.0.21
 github.com/cloudfoundry/php-dist-cnb/php
-# github.com/cloudfoundry/php-web-cnb v0.0.4-0.20190521210427-71ed2708047b
+# github.com/cloudfoundry/php-web-cnb v0.0.11 => /Users/pivotal/workspace/php-web-cnb
 github.com/cloudfoundry/php-web-cnb/config
 github.com/cloudfoundry/php-web-cnb/phpweb
 github.com/cloudfoundry/php-web-cnb/procmgr

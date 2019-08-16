@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/cloudfoundry/php-composer-cnb/composer"
-	"github.com/cloudfoundry/php-composer-cnb/packages"
 	"os"
 
-	"github.com/buildpack/libbuildpack/buildplan"
+	"github.com/cloudfoundry/php-composer-cnb/composer"
+	"github.com/cloudfoundry/php-composer-cnb/packages"
+
 	"github.com/cloudfoundry/libcfbuildpack/build"
 )
 
@@ -55,5 +55,5 @@ func runBuild(context build.Build) (int, error) {
 		}
 	}
 
-	return context.Success(buildplan.BuildPlan{})
+	return context.Success()
 }

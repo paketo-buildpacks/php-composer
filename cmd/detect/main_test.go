@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/cloudfoundry/libcfbuildpack/buildpackplan"
+
 	"github.com/buildpack/libbuildpack/buildplan"
 	"github.com/cloudfoundry/libcfbuildpack/logger"
 	"github.com/cloudfoundry/php-dist-cnb/php"
@@ -42,7 +44,7 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 		})
 
 		it("should parse the correct version", func() {
-			version, err := findPHPVersion(compsoserPath, factory.Detect.Logger)
+			version, _, err := findPHPVersion(compsoserPath, factory.Detect.Logger)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(version).To(Equal(phpVersion))
 		})
@@ -69,7 +71,7 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 		})
 
 		it("should parse the version from composer.lock", func() {
-			version, err := findPHPVersion(compsoserPath, factory.Detect.Logger)
+			version, _, err := findPHPVersion(compsoserPath, factory.Detect.Logger)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(version).To(Equal(phpLockVersion))
 		})
@@ -94,7 +96,7 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 
 			log := logger.Logger{Logger: bplogger.NewLogger(debug, info)}
 
-			version, err := findPHPVersion(compsoserPath, log)
+			version, _, err := findPHPVersion(compsoserPath, log)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(version).To(Equal(phpVersion))
 			Expect(info.String()).To(Equal("WARNING: Include a 'composer.lock' file with your application! This will make sure the exact same version of dependencies are used when you deploy to CloudFoundry. It will also enable caching of your dependency layer.\n"))
@@ -103,14 +105,14 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 
 	when("there is a composer.json and a composer.lock and neither have a php version", func() {
 		var (
-			compsoserPath    string
+			composerPath     string
 			composerLockPath string
 		)
 
 		it.Before(func() {
 			composerJSONString := `{"require": {}}`
-			compsoserPath = filepath.Join(factory.Detect.Application.Root, composer.ComposerJSON)
-			test.WriteFile(t, compsoserPath, composerJSONString)
+			composerPath = filepath.Join(factory.Detect.Application.Root, composer.ComposerJSON)
+			test.WriteFile(t, composerPath, composerJSONString)
 
 			composerLockString := `{"platform": []}`
 			composerLockPath = filepath.Join(factory.Detect.Application.Root, composer.ComposerLock)
@@ -118,7 +120,7 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 		})
 
 		it("should not fail, but just pick latest PHP", func() {
-			version, err := findPHPVersion(compsoserPath, factory.Detect.Logger)
+			version, _, err := findPHPVersion(composerPath, factory.Detect.Logger)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(version).To(Equal(""))
 		})
@@ -126,14 +128,13 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 
 	when("composer is being used", func() {
 		const VERSION string = "1.2.3"
-		var compsoserPath string
+		var composerPath string
 
 		it.Before(func() {
 			composerJSONString := `{"require": {"php": "` + VERSION + `"}}`
 
-			compsoserPath = filepath.Join(factory.Detect.Application.Root, composer.ComposerJSON)
-			test.WriteFile(t, compsoserPath, composerJSONString)
-			factory.AddBuildPlan(composer.Dependency, buildplan.Dependency{})
+			composerPath = filepath.Join(factory.Detect.Application.Root, composer.ComposerJSON)
+			test.WriteFile(t, composerPath, composerJSONString)
 			fakeVersion := "php.default.VERSION"
 			factory.Detect.Buildpack.Metadata = map[string]interface{}{"default_version": fakeVersion}
 		})
@@ -144,14 +145,21 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 				Expect(err).NotTo(HaveOccurred())
 				Expect(code).To(Equal(detect.PassStatusCode))
 
-				Expect(factory.Output).To(Equal(buildplan.BuildPlan{
-					composer.Dependency: buildplan.Dependency{
-						Metadata: buildplan.Metadata{"build": true},
+				Expect(factory.Plans.Plan).To(Equal(buildplan.Plan{
+					Requires: []buildplan.Required{
+						{
+							Name:    php.Dependency,
+							Version: VERSION,
+							Metadata: buildplan.Metadata{
+								"build":                     true,
+								buildpackplan.VersionSource: php.ComposerJSONSource,
+							},
+						},
+						{
+							Name: composer.Dependency,
+						},
 					},
-					php.Dependency: buildplan.Dependency{
-						Version:  VERSION,
-						Metadata: buildplan.Metadata{"build": true},
-					},
+					Provides: []buildplan.Provided{{Name: composer.Dependency}},
 				}))
 			})
 		})
@@ -164,15 +172,22 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 				Expect(err).NotTo(HaveOccurred())
 				Expect(code).To(Equal(detect.PassStatusCode))
 
-				Expect(factory.Output).To(Equal(buildplan.BuildPlan{
-					composer.Dependency: buildplan.Dependency{
-						Version:  "1.2.3",
-						Metadata: buildplan.Metadata{"build": true},
+				Expect(factory.Plans.Plan).To(Equal(buildplan.Plan{
+					Requires: []buildplan.Required{
+						{
+							Name:    php.Dependency,
+							Version: VERSION,
+							Metadata: buildplan.Metadata{
+								"build":                     true,
+								buildpackplan.VersionSource: php.ComposerJSONSource,
+							},
+						},
+						{
+							Name:    composer.Dependency,
+							Version: "1.2.3",
+						},
 					},
-					php.Dependency: buildplan.Dependency{
-						Version:  VERSION,
-						Metadata: buildplan.Metadata{"build": true},
-					},
+					Provides: []buildplan.Provided{{Name: composer.Dependency}},
 				}))
 			})
 		})

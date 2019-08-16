@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/cloudfoundry/libcfbuildpack/buildpackplan"
+
 	"github.com/buildpack/libbuildpack/buildplan"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/logger"
@@ -42,29 +44,36 @@ func runDetect(context detect.Detect) (int, error) {
 		return context.Fail(), err
 	}
 
-	phpVersion, err := findPHPVersion(path, context.Logger)
+	phpVersion, phpVersionSrc, err := findPHPVersion(path, context.Logger)
 	if err != nil {
 		return context.Fail(), err
 	}
 
-	return context.Pass(buildplan.BuildPlan{
-		composer.Dependency: buildplan.Dependency{
-			Version:  buildpackYAML.Composer.Version,
-			Metadata: buildplan.Metadata{"build": true},
+	return context.Pass(buildplan.Plan{
+		Requires: []buildplan.Required{
+			{
+				Name:    php.Dependency,
+				Version: phpVersion,
+				Metadata: buildplan.Metadata{
+					"build":                     true,
+					buildpackplan.VersionSource: phpVersionSrc,
+				},
+			},
+			{
+				Name:    composer.Dependency,
+				Version: buildpackYAML.Composer.Version,
+			},
 		},
-		php.Dependency: buildplan.Dependency{
-			Version:  phpVersion,
-			Metadata: buildplan.Metadata{"build": true},
-		},
+		Provides: []buildplan.Provided{{Name: composer.Dependency}},
 	})
 }
 
-func findPHPVersion(path string, logger logger.Logger) (string, error) {
+func findPHPVersion(path string, logger logger.Logger) (string, string, error) {
 	composerLockPath := filepath.Join(filepath.Dir(path), composer.ComposerLock)
 
 	composerLockExists, err := helper.FileExists(composerLockPath)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	if composerLockExists {
@@ -76,10 +85,10 @@ func findPHPVersion(path string, logger logger.Logger) (string, error) {
 	return parseComposerJSON(path)
 }
 
-func parseComposerJSON(path string) (string, error) {
+func parseComposerJSON(path string) (string, string, error) {
 	buf, err := ioutil.ReadFile(path)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	type composerRequire struct {
@@ -91,16 +100,16 @@ func parseComposerJSON(path string) (string, error) {
 	}{}
 
 	if err := json.Unmarshal(buf, &composerJSON); err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return composerJSON.Require.Php, nil
+	return composerJSON.Require.Php, php.ComposerJSONSource, nil
 }
 
-func parseComposerLock(path string) (string, error) {
+func parseComposerLock(path string) (string, string, error) {
 	buf, err := ioutil.ReadFile(path)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	// Composer.lock -> platform can be a dict or an array
@@ -116,10 +125,10 @@ func parseComposerLock(path string) (string, error) {
 		// this happens when it's an array, which doesn't tell us the PHP version
 		// return empty string to accept default PHP version & don't error
 		if err.Error() == "json: cannot unmarshal array into Go struct field .platform of type main.composerLockPlatform" {
-			return "", nil
+			return "", "", nil
 		}
-		return "", err
+		return "", "", err
 	}
 
-	return composerLock.Platform.Php, nil
+	return composerLock.Platform.Php, php.ComposerLockSource, nil
 }

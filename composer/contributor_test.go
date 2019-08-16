@@ -2,13 +2,14 @@ package composer_test
 
 import (
 	"fmt"
-	"github.com/sclevine/spec/report"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/buildpack/libbuildpack/buildplan"
+	"github.com/cloudfoundry/libcfbuildpack/buildpackplan"
+	"github.com/sclevine/spec/report"
+
 	"github.com/cloudfoundry/libcfbuildpack/test"
 	"github.com/cloudfoundry/php-composer-cnb/composer"
 	. "github.com/onsi/gomega"
@@ -29,7 +30,7 @@ func testContributor(t *testing.T, when spec.G, it spec.S) {
 
 		it("returns true if a build plan exists", func() {
 			f := test.NewBuildFactory(t)
-			f.AddBuildPlan(composer.Dependency, buildplan.Dependency{})
+			f.AddPlan(buildpackplan.Plan{Name: composer.Dependency})
 			f.AddDependency(composer.Dependency, stubComposerFixture)
 
 			_, willContribute, err := composer.NewContributor(f.Build)
@@ -47,8 +48,9 @@ func testContributor(t *testing.T, when spec.G, it spec.S) {
 
 		it("contributes composer to the build layer when included in the build plan", func() {
 			f := test.NewBuildFactory(t)
-			f.AddBuildPlan(composer.Dependency, buildplan.Dependency{
-				Metadata: buildplan.Metadata{"build": true},
+			f.AddPlan(buildpackplan.Plan{
+				Name:     composer.Dependency,
+				Metadata: buildpackplan.Metadata{"build": true},
 			})
 			f.AddDependency(composer.Dependency, stubComposerFixture)
 
