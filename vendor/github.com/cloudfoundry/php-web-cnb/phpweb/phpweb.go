@@ -6,9 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/buildpack/libbuildpack/buildplan"
 	"github.com/cloudfoundry/libcfbuildpack/buildpack"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 const (
@@ -34,7 +35,15 @@ const (
 // 2. Build Plan Version, if set by composer
 // 3. Buildpack Metadata "default_version"
 // 4. `*` which should pick latest version
-func Version(buildpack buildpack.Buildpack) string {
+func Version(buildpackYAML BuildpackYAML, buildpack buildpack.Buildpack, dependency buildplan.Dependency) string {
+	if buildpackYAML.Config.Version != "" {
+		return buildpackYAML.Config.Version
+	}
+
+	if dependency.Version != "" {
+		return dependency.Version
+	}
+
 	if version, ok := buildpack.Metadata["default_version"].(string); ok {
 		return version
 	}

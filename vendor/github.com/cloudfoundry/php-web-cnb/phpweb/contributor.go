@@ -30,10 +30,12 @@ import (
 	"github.com/cloudfoundry/php-web-cnb/config"
 
 	"github.com/buildpack/libbuildpack/application"
+	"github.com/buildpack/libbuildpack/buildplan"
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
 	"github.com/cloudfoundry/libcfbuildpack/logger"
+	"github.com/cloudfoundry/php-dist-cnb/php"
 )
 
 // Contributor represents a PHP contribution by the buildpack
@@ -42,6 +44,7 @@ type Contributor struct {
 	layers        layers.Layers
 	logger        logger.Logger
 	buildpackYAML BuildpackYAML
+	phpDep        buildplan.Dependency
 	isWebApp      bool
 	isScript      bool
 	procmgr       string
@@ -61,8 +64,10 @@ func NewContributor(context build.Build) (c Contributor, willContribute bool, er
 		return Contributor{}, false, err
 	}
 
-	isWebApp := context.Plans.Has(WebDependency)
-	isScript := context.Plans.Has(ScriptDependency)
+	_, isWebApp := context.BuildPlan[WebDependency]
+	_, isScript := context.BuildPlan[ScriptDependency]
+	phpDep, _ := context.BuildPlan[php.Dependency]
+
 	randomHash := generateRandomHash()
 
 	contributor := Contributor{
@@ -70,6 +75,7 @@ func NewContributor(context build.Build) (c Contributor, willContribute bool, er
 		layers:        context.Layers,
 		logger:        context.Logger,
 		buildpackYAML: buildpackYAML,
+		phpDep:        phpDep,
 		isWebApp:      isWebApp,
 		isScript:      isScript,
 		procmgr:       filepath.Join(context.Buildpack.Root, "bin", "procmgr"),

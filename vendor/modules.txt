@@ -15,7 +15,7 @@ github.com/buildpack/libbuildpack/buildpack
 github.com/buildpack/libbuildpack/platform
 github.com/buildpack/libbuildpack/services
 github.com/buildpack/libbuildpack/stack
-# github.com/cloudfoundry/dagger v0.0.0-20190813205748-e53989179538
+# github.com/cloudfoundry/dagger v0.0.0-20190819163648-1608b353a41a
 github.com/cloudfoundry/dagger
 # github.com/cloudfoundry/libcfbuildpack v1.83.0
 github.com/cloudfoundry/libcfbuildpack/build
@@ -31,7 +31,7 @@ github.com/cloudfoundry/libcfbuildpack/test
 github.com/cloudfoundry/libcfbuildpack/internal
 # github.com/cloudfoundry/php-dist-cnb v0.0.21
 github.com/cloudfoundry/php-dist-cnb/php
-# github.com/cloudfoundry/php-web-cnb v0.0.11 => /Users/pivotal/workspace/php-web-cnb
+# github.com/cloudfoundry/php-web-cnb v0.0.11
 github.com/cloudfoundry/php-web-cnb/config
 github.com/cloudfoundry/php-web-cnb/phpweb
 github.com/cloudfoundry/php-web-cnb/procmgr
