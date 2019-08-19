@@ -31,7 +31,7 @@ github.com/cloudfoundry/libcfbuildpack/test
 github.com/cloudfoundry/libcfbuildpack/internal
 # github.com/cloudfoundry/php-dist-cnb v0.0.21
 github.com/cloudfoundry/php-dist-cnb/php
-# github.com/cloudfoundry/php-web-cnb v0.0.11
+# github.com/cloudfoundry/php-web-cnb v0.0.13
 github.com/cloudfoundry/php-web-cnb/config
 github.com/cloudfoundry/php-web-cnb/phpweb
 github.com/cloudfoundry/php-web-cnb/procmgr
