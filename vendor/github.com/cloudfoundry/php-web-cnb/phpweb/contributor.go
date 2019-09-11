@@ -114,8 +114,8 @@ func (c Contributor) contributeWebApp(layer layers.Layer) error {
 
 		return c.layers.WriteApplicationMetadata(layers.Metadata{
 			Processes: []layers.Process{
-				{"web", command},
-				{"task", command},
+				{"web", command, false},
+				{"task", command, false},
 			},
 		})
 	} else if webServerName == ApacheHttpd {
@@ -170,7 +170,7 @@ func (c Contributor) contributeWebServer(layer layers.Layer, name string, webPro
 		return fmt.Errorf("failed to write procs.yml: %s", err)
 	}
 
-	return c.layers.WriteApplicationMetadata(layers.Metadata{Processes: []layers.Process{{"web", fmt.Sprintf("procmgr %s", procsYaml)}}})
+	return c.layers.WriteApplicationMetadata(layers.Metadata{Processes: []layers.Process{{"web", fmt.Sprintf("procmgr %s", procsYaml), false}}})
 
 }
 
@@ -179,23 +179,33 @@ func (c Contributor) contributeScript(layer layers.Layer) error {
 		return err
 	}
 
+	if c.buildpackYAML.Config.Script == "" {
+		for _, possible := range DefaultCliScripts {
+			exists, err := helper.FileExists(filepath.Join(c.application.Root, possible))
+			if err != nil {
+				c.logger.BodyError(err.Error())
+				// skip and continue
+			}
+
+			if exists {
+				c.buildpackYAML.Config.Script = possible
+				break
+			}
+		}
+
+		if c.buildpackYAML.Config.Script == "" {
+			c.buildpackYAML.Config.Script = "app.php"
+			c.logger.BodyWarning("Buildpack could not find a file to execute. Either set php.script in buildpack.yml or include one of these files [%s]", strings.Join(DefaultCliScripts, ", "))
+		}
+	}
+
 	scriptPath := filepath.Join(c.application.Root, c.buildpackYAML.Config.Script)
-
-	scriptExists, err := helper.FileExists(scriptPath)
-	if err != nil {
-		return err
-	}
-
-	if !scriptExists {
-		c.logger.Info("WARNING: `%s` start script not found. App will not start unless you specify a custom start command.", c.buildpackYAML.Config.Script)
-	}
-
 	command := fmt.Sprintf("php %s", scriptPath)
 
 	return c.layers.WriteApplicationMetadata(layers.Metadata{
 		Processes: []layers.Process{
-			{"web", command},
-			{"task", command},
+			{"web", command, false},
+			{"task", command, false},
 		},
 	})
 }
