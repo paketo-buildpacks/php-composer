@@ -99,15 +99,15 @@ func (c Contributor) Contribute() error {
 		return err
 	}
 
-	packagesFlags := []layers.Flag{layers.Launch}
+	// symlink vendor_home to "vendor" under the app root so PHP apps can find Composer dependencies
+	composerLayerVendorDir := filepath.Join(c.composerPackagesLayer.Root, c.composerBuildpackYAML.Composer.VendorDirectory)
+	composerAppVendorDir := filepath.Join(c.app.Root, c.composerBuildpackYAML.Composer.VendorDirectory)
 
-	if err := c.composerPackagesLayer.Contribute(c.composerMetadata, c.contributeComposerPackages, packagesFlags...); err != nil {
+	if err := helper.WriteSymlink(composerLayerVendorDir, composerAppVendorDir); err != nil {
 		return err
 	}
 
-	// symlink vendor_home to "vendor" under the app root so PHP apps can find Composer dependencies
-	return helper.WriteSymlink(filepath.Join(c.composerPackagesLayer.Root, c.composerBuildpackYAML.Composer.VendorDirectory),
-		filepath.Join(c.app.Root, c.composerBuildpackYAML.Composer.VendorDirectory))
+	return c.composerPackagesLayer.Contribute(c.composerMetadata, c.contributeComposerPackages, layers.Launch)
 }
 
 func (c Contributor) configureGithubOauthToken() error {
