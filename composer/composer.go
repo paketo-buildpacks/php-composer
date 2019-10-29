@@ -88,10 +88,10 @@ func (c Composer) CheckPlatformReqs() ([]string, error) {
 	extensions := []string{}
 	for _, line := range strings.Split(output, "\n") {
 		chunks := strings.Split(strings.TrimSpace(line), " ")
-		extension_name := strings.Trim(strings.TrimSpace(chunks[0]), "ext-")
-		extension_status := strings.TrimSpace(chunks[len(chunks)-1])
-		if extension_name != "php" && extension_status == "missing" {
-			extensions = append(extensions, extension_name)
+		extensionName := strings.TrimPrefix(strings.TrimSpace(chunks[0]), "ext-")
+		extensionStatus := strings.TrimSpace(chunks[len(chunks)-1])
+		if extensionName != "php" && extensionStatus == "missing" {
+			extensions = append(extensions, extensionName)
 		}
 	}
 

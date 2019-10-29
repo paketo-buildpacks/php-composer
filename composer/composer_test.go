@@ -171,5 +171,19 @@ func testComposer(t *testing.T, when spec.G, it spec.S) {
 			Expect(extensions).To(ConsistOf("kasjadf"))
 		})
 
+		it("grabs a list of the extensions excluding php even when extension name includes ext characters", func() {
+			fakeRunner := &runner.FakeRunner{}
+			comp := NewComposer(factory.Build.Application.Root, "/tmp", factory.Build.Logger)
+			comp.Runner = fakeRunner
+			fakeRunner.Out = bytes.NewBufferString(`ext-pdo         n/a     doctrine/orm requires ext-pdo (*)                 missing
+ext-pdo_sqlite  n/a     symfony/symfony-demo requires ext-pdo_sqlite (*)  missing
+php             7.3.11                                                    success
+`)
+
+			extensions, err := comp.CheckPlatformReqs()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(extensions).To(ConsistOf("pdo", "pdo_sqlite"))
+		})
+
 	})
 }
