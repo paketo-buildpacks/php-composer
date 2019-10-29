@@ -198,6 +198,8 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 
 				Expect(app.BuildLogs()).To(MatchRegexp("Package operations: \\d+ install"))
 
+				Expect(app.Start()).To(Succeed())
+
 				// ensure composer library is available & functions
 				logs, err := app.Logs()
 				Expect(err).ToNot(HaveOccurred())
