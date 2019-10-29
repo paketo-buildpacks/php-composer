@@ -198,12 +198,82 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 
 				Expect(app.BuildLogs()).To(MatchRegexp("Package operations: \\d+ install"))
 
+				// ensure composer library is available & functions
+				logs, err := app.Logs()
+				Expect(err).ToNot(HaveOccurred())
+				Expect(logs).To(ContainSubstring("SUCCESS"))
+
+				body, _, err := app.HTTPGet("/")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(body).To(ContainSubstring("OK"))
+
+				// Second Run through
 				app, err = dagger.PackBuildNamedImageWithEnv(app.ImageName, filepath.Join("testdata", appName), MakeBuildEnv(debug), buildpacks...)
 
 				Expect(app.BuildLogs()).To(MatchRegexp("PHP Composer \\S+: Reusing cached layer"))
 				Expect(app.BuildLogs()).NotTo(MatchRegexp("PHP Composer \\S+: Contributing to layer"))
 
 				Expect(app.Start()).To(Succeed())
+
+				// ensure composer library is available & functions
+				logs, err = app.Logs()
+				Expect(err).ToNot(HaveOccurred())
+				Expect(logs).To(ContainSubstring("SUCCESS"))
+
+				body, _, err = app.HTTPGet("/")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(body).To(ContainSubstring("OK"))
+			})
+
+			it("does install composer packages", func() {
+				appName := "composer_app_with_vendor"
+				debug := false
+				app, err := PreparePhpApp(appName, buildpacks, debug)
+				Expect(err).ToNot(HaveOccurred())
+
+				Expect(app.BuildLogs()).To(ContainSubstring("Nothing to install or update"))
+
+				Expect(app.Start()).To(Succeed())
+
+				// ensure composer library is available & functions
+				logs, err := app.Logs()
+				Expect(err).ToNot(HaveOccurred())
+				Expect(logs).To(ContainSubstring("SUCCESS"))
+
+				body, _, err := app.HTTPGet("/")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(body).To(ContainSubstring("OK"))
+
+				// Second Run through
+				app, err = dagger.PackBuildNamedImageWithEnv(app.ImageName, filepath.Join("testdata", appName), MakeBuildEnv(debug), buildpacks...)
+
+				Expect(app.BuildLogs()).To(MatchRegexp("PHP Composer \\S+: Reusing cached layer"))
+				Expect(app.BuildLogs()).NotTo(MatchRegexp("PHP Composer \\S+: Contributing to layer"))
+
+				Expect(app.Start()).To(Succeed())
+
+				// ensure composer library is available & functions
+				logs, err = app.Logs()
+				Expect(err).ToNot(HaveOccurred())
+				Expect(logs).To(ContainSubstring("SUCCESS"))
+
+				body, _, err = app.HTTPGet("/")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(body).To(ContainSubstring("OK"))
+			})
+
+		})
+
+		when("the app already has a vendor directory", func() {
+			it("reuses the vendor'd dependencies", func() {
+				appName := "composer_app_with_vendor"
+				debug := false
+				app, err := PreparePhpApp(appName, buildpacks, debug)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(app.Start()).To(Succeed())
+
+				Expect(app.BuildLogs()).ToNot(ContainSubstring("- Installing psr/log (1.1.1): Downloading (100%)"))
+				Expect(app.BuildLogs()).ToNot(ContainSubstring("- Installing monolog/monolog (1.25.1): Downloading (100%)"))
 
 				// ensure composer library is available & functions
 				logs, err := app.Logs()

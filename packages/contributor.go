@@ -89,6 +89,26 @@ func NewContributor(context build.Build, composerPharPath string) (Contributor, 
 	return contributor, true, nil
 }
 
+func (c Contributor) SetupVendorDir() error {
+	composerLayerVendorDir := filepath.Join(c.composerPackagesLayer.Root, c.composerBuildpackYAML.Composer.VendorDirectory)
+	composerAppVendorDir := filepath.Join(c.app.Root, c.composerBuildpackYAML.Composer.VendorDirectory)
+
+	exists, err := helper.FileExists(composerAppVendorDir)
+	if err != nil {
+		return err
+	} else if exists {
+		if err := helper.CopyDirectory(composerAppVendorDir, composerLayerVendorDir); err != nil {
+			return err
+		}
+		if err := os.RemoveAll(composerAppVendorDir); err != nil {
+			return err
+		}
+	}
+
+	// symlink vendor_home to "vendor" under the app root so PHP apps can find Composer dependencies
+	return helper.WriteSymlink(composerLayerVendorDir, composerAppVendorDir)
+}
+
 func (c Contributor) Contribute() error {
 	randomHash := generateRandomHash()
 	if err := c.cacheLayer.Contribute(Metadata{"PHP Composer Cache", hex.EncodeToString(randomHash[:])}, func(layer layers.Layer) error { return nil }, layers.Cache); err != nil {
@@ -99,11 +119,7 @@ func (c Contributor) Contribute() error {
 		return err
 	}
 
-	// symlink vendor_home to "vendor" under the app root so PHP apps can find Composer dependencies
-	composerLayerVendorDir := filepath.Join(c.composerPackagesLayer.Root, c.composerBuildpackYAML.Composer.VendorDirectory)
-	composerAppVendorDir := filepath.Join(c.app.Root, c.composerBuildpackYAML.Composer.VendorDirectory)
-
-	if err := helper.WriteSymlink(composerLayerVendorDir, composerAppVendorDir); err != nil {
+	if err := c.SetupVendorDir(); err != nil {
 		return err
 	}
 

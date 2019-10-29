@@ -2,11 +2,12 @@ package packages
 
 import (
 	"bytes"
-	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"io/ioutil"
 	"math/rand"
 	"path/filepath"
 	"testing"
+
+	"github.com/cloudfoundry/libcfbuildpack/helper"
 
 	bplogger "github.com/buildpack/libbuildpack/logger"
 	"github.com/cloudfoundry/libcfbuildpack/logger"
@@ -117,5 +118,24 @@ func testComposerPackage(t *testing.T, when spec.G, it spec.S) {
 			Expect(string(contents)).To(ContainSubstring("extension = qwerty.so\n"))
 			Expect(string(contents)).To(ContainSubstring("extension = abcdefg.so\n"))
 		})
+	})
+
+	when("The vendor folder already exists", func() {
+		it("moves it to a layer & links it ", func() {
+			Expect(helper.WriteFile(filepath.Join(factory.Build.Application.Root, "composer.json"), 0644, "")).ToNot(HaveOccurred())
+
+			vendoredFile := filepath.Join(factory.Build.Application.Root, "vendor", "vendored_file.txt")
+			Expect(helper.WriteFile(vendoredFile, 0644, "stuff")).ToNot(HaveOccurred())
+
+			contributor, willContribute, err := NewContributor(factory.Build, "/tmp")
+			Expect(err).NotTo(HaveOccurred())
+			Expect(willContribute).To(BeTrue())
+
+			Expect(contributor.SetupVendorDir()).To(Succeed())
+
+			vendorDirPath := filepath.Join(contributor.composerPackagesLayer.Root, "vendor")
+			Expect(vendorDirPath).To(BeADirectory())
+		})
+
 	})
 }
