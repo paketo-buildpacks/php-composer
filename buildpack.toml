@@ -1,44 +1,73 @@
-api = "0.2"
+API = "0.2"
 
 [buildpack]
-id = "org.cloudfoundry.php-composer"
-name = "PHP Composer Buildpack"
-version = "{{ .Version }}"
+  ID = "org.cloudfoundry.php-composer"
+  Name = "PHP Composer Buildpack"
+  Version = "{{ .Version }}"
 
-[metadata]
-include_files = ["bin/build","bin/detect","buildpack.toml"]
-pre_package = "./scripts/build.sh"
+[Metadata]
+  include_files = ["bin/build", "bin/detect", "buildpack.toml"]
 
-[[metadata.dependencies]]
-id = "php-composer"
-sha256 = "f7d23de9e6d8dc40041e81ebeb20b411aa0fb04d0838797d10b75ae5e59e12a3"
-source = "https://github.com/composer/composer/releases/download/1.8.6/composer.phar"
-source_sha256 = "f7d23de9e6d8dc40041e81ebeb20b411aa0fb04d0838797d10b75ae5e59e12a3"
-stacks = ["org.cloudfoundry.stacks.cflinuxfs3","io.buildpacks.stacks.bionic"]
-uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.8.6-f7d23de9.phar"
-version = "1.8.6"
+  [[Metadata.Dependencies]]
+    ID = "composer"
+    SHA256 = "7834fe8069d0a0c776275623365e70d7f681d5c4995d0f0e826a6e3823369afc"
+    Source = "https://github.com/composer/composer/releases/download/1.9.1/composer.phar"
+    source_sha256 = "7834fe8069d0a0c776275623365e70d7f681d5c4995d0f0e826a6e3823369afc"
+    Stacks = ["io.buildpacks.stacks.bionic"]
+    URI = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.9.1-7834fe80.phar"
+    Version = "1.9.1"
 
-[[metadata.dependencies]]
-id = "php-composer"
-sha256 = "1126fd7501ae6ff1dc9f91f0a3eca7430b1ea060d018d21521dc5e2d1ba01606"
-source = "https://github.com/composer/composer/releases/download/1.9.0/composer.phar"
-source_sha256 = "1126fd7501ae6ff1dc9f91f0a3eca7430b1ea060d018d21521dc5e2d1ba01606"
-stacks = ["org.cloudfoundry.stacks.cflinuxfs3","io.buildpacks.stacks.bionic"]
-uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.9.0-1126fd75.phar"
-version = "1.9.0"
+  [[Metadata.Dependencies]]
+    ID = "composer"
+    SHA256 = "7834fe8069d0a0c776275623365e70d7f681d5c4995d0f0e826a6e3823369afc"
+    Source = "https://github.com/composer/composer/releases/download/1.9.1/composer.phar"
+    source_sha256 = "7834fe8069d0a0c776275623365e70d7f681d5c4995d0f0e826a6e3823369afc"
+    Stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
+    URI = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.9.1-7834fe80.phar"
+    Version = "1.9.1"
 
-[[metadata.dependencies]]
-id = "php-composer"
-name = "Composer"
-sha256 = "23b29b1a921b56db3c12ba531752dffcfaa3de0fcece3e54974e06990e46bbf9"
-source = "https://github.com/composer/composer/releases/download/1.8.5/composer.phar"
-source_sha256 = "23b29b1a921b56db3c12ba531752dffcfaa3de0fcece3e54974e06990e46bbf9"
-stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
-uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.8.5-23b29b1a.phar"
-version = "1.8.5"
+  [[Metadata.Dependencies]]
+    ID = "php-composer"
+    Name = "Composer"
+    SHA256 = "23b29b1a921b56db3c12ba531752dffcfaa3de0fcece3e54974e06990e46bbf9"
+    Source = "https://github.com/composer/composer/releases/download/1.8.5/composer.phar"
+    source_sha256 = "23b29b1a921b56db3c12ba531752dffcfaa3de0fcece3e54974e06990e46bbf9"
+    Stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
+    URI = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.8.5-23b29b1a.phar"
+    Version = "1.8.5"
 
-[[stacks]]
-id = "org.cloudfoundry.stacks.cflinuxfs3"
+  [[Metadata.Dependencies]]
+    ID = "php-composer"
+    SHA256 = "f7d23de9e6d8dc40041e81ebeb20b411aa0fb04d0838797d10b75ae5e59e12a3"
+    Source = "https://github.com/composer/composer/releases/download/1.8.6/composer.phar"
+    source_sha256 = "f7d23de9e6d8dc40041e81ebeb20b411aa0fb04d0838797d10b75ae5e59e12a3"
+    Stacks = ["io.buildpacks.stacks.bionic"]
+    URI = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.8.6-f7d23de9.phar"
+    Version = "1.8.6"
 
-[[stacks]]
-id = "io.buildpacks.stacks.bionic"
+  [[Metadata.Dependencies]]
+    ID = "php-composer"
+    SHA256 = "f7d23de9e6d8dc40041e81ebeb20b411aa0fb04d0838797d10b75ae5e59e12a3"
+    Source = "https://github.com/composer/composer/releases/download/1.8.6/composer.phar"
+    source_sha256 = "f7d23de9e6d8dc40041e81ebeb20b411aa0fb04d0838797d10b75ae5e59e12a3"
+    Stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
+    URI = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.8.6-f7d23de9.phar"
+    Version = "1.8.6"
+
+  [[Metadata.Dependencies]]
+    ID = "php-composer"
+    SHA256 = "1126fd7501ae6ff1dc9f91f0a3eca7430b1ea060d018d21521dc5e2d1ba01606"
+    Source = "https://github.com/composer/composer/releases/download/1.9.0/composer.phar"
+    source_sha256 = "1126fd7501ae6ff1dc9f91f0a3eca7430b1ea060d018d21521dc5e2d1ba01606"
+    Stacks = ["io.buildpacks.stacks.bionic"]
+    URI = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.9.0-1126fd75.phar"
+    Version = "1.9.0"
+
+  [[Metadata.Dependencies]]
+    ID = "php-composer"
+    SHA256 = "1126fd7501ae6ff1dc9f91f0a3eca7430b1ea060d018d21521dc5e2d1ba01606"
+    Source = "https://github.com/composer/composer/releases/download/1.9.0/composer.phar"
+    source_sha256 = "1126fd7501ae6ff1dc9f91f0a3eca7430b1ea060d018d21521dc5e2d1ba01606"
+    Stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
+    URI = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.9.0-1126fd75.phar"
+    Version = "1.9.0"
