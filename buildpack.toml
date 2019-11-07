@@ -71,3 +71,9 @@ api = "0.2"
     stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
     uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.9.0-1126fd75.phar"
     version = "1.9.0"
+
+[[stacks]]
+id = "org.cloudfoundry.stacks.cflinuxfs3"
+
+[[stacks]]
+id = "io.buildpacks.stacks.bionic"
