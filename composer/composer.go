@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	Dependency         = "php-composer"
+	Dependency         = "composer"
 	PackagesDependency = "php-composer-packages"
 	CacheDependency    = "php-composer-cache"
 	ComposerLock       = "composer.lock"

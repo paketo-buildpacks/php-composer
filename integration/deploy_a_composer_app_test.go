@@ -43,7 +43,7 @@ func TestIntegrationComposerApp(t *testing.T) {
 		}
 	}()
 
-	spec.Run(t, "Deploy A Composer App", testIntegrationComposerApp, spec.Report(report.Terminal{}))
+	spec.Run(t, "Deploy A Composer App", testIntegrationComposerApp, spec.Report(report.Terminal{}), spec.Parallel())
 }
 
 func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
@@ -144,7 +144,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 			Expect(logs).To(ContainSubstring("SUCCESS"))
 
 			buildLogs := app.BuildLogs()
-			Expect(buildLogs).To(ContainSubstring("Running `php /layers/org.cloudfoundry.php-composer/php-composer/composer.phar config -g github-oauth.github.com "))
+			Expect(buildLogs).To(ContainSubstring("Running `php /layers/org.cloudfoundry.php-composer/composer/composer.phar config -g github-oauth.github.com "))
 
 			body, _, err := app.HTTPGet("/")
 			Expect(err).ToNot(HaveOccurred())
@@ -179,7 +179,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 			}
 
 			buildLogs := app.BuildLogs()
-			Expect(buildLogs).To(ContainSubstring("Running `php /layers/org.cloudfoundry.php-composer/php-composer/composer.phar global require --no-progress friendsofphp/php-cs-fixer fxp/composer-asset-plugin:~1.3` from directory '/workspace'"))
+			Expect(buildLogs).To(ContainSubstring("Running `php /layers/org.cloudfoundry.php-composer/composer/composer.phar global require --no-progress friendsofphp/php-cs-fixer fxp/composer-asset-plugin:~1.3` from directory '/workspace'"))
 
 			Expect(buildLogs).To(ContainSubstring("php-cs-fixer -h"))
 			Expect(buildLogs).To(ContainSubstring("php /layers/org.cloudfoundry.php-composer/php-composer-packages/global/vendor/bin/php-cs-fixer list"))
