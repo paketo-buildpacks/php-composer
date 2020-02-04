@@ -40,9 +40,6 @@ github.com/cloudfoundry/packit/pexec
 github.com/cloudfoundry/php-dist-cnb/php
 # github.com/cloudfoundry/php-web-cnb v0.0.82
 github.com/cloudfoundry/php-web-cnb/config
-github.com/cloudfoundry/php-web-cnb/features
-github.com/cloudfoundry/php-web-cnb/phpweb
-github.com/cloudfoundry/php-web-cnb/procmgr
 # github.com/fatih/color v1.9.0
 github.com/fatih/color
 # github.com/golang/protobuf v1.3.3
