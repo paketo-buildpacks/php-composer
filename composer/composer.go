@@ -11,7 +11,7 @@ import (
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/logger"
 	"github.com/cloudfoundry/php-composer-cnb/runner"
-	"github.com/cloudfoundry/php-web-cnb/phpweb"
+	"github.com/cloudfoundry/php-web-cnb/config"
 	"gopkg.in/yaml.v2"
 )
 
@@ -100,7 +100,7 @@ func (c Composer) CheckPlatformReqs() ([]string, error) {
 
 // FindComposer locates the composer JSON and composer lock files
 func FindComposer(appRoot string, composerJSONPath string) (string, error) {
-	phpBuildpackYAML, err := phpweb.LoadBuildpackYAML(appRoot)
+	phpBuildpackYAML, err := config.LoadBuildpackYAML(appRoot)
 	if err != nil {
 		return "", err
 	}

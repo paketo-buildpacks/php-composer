@@ -16,7 +16,7 @@ import (
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
 	"github.com/cloudfoundry/php-composer-cnb/composer"
-	"github.com/cloudfoundry/php-web-cnb/phpweb"
+	"github.com/cloudfoundry/php-web-cnb/config"
 )
 
 type Metadata struct {
@@ -221,7 +221,7 @@ func (c Contributor) enablePHPExtensions(extensions []string) error {
 }
 
 func (c Contributor) warnAboutPublicComposerFiles(layer layers.Layer) error {
-	bpYAML, err := phpweb.LoadBuildpackYAML(c.app.Root)
+	bpYAML, err := config.LoadBuildpackYAML(c.app.Root)
 	if err != nil {
 		return err
 	}
