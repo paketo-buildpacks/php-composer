@@ -22,12 +22,12 @@ api = "0.2"
 
   [[metadata.dependencies]]
     id = "composer"
-    sha256 = "f7d23de9e6d8dc40041e81ebeb20b411aa0fb04d0838797d10b75ae5e59e12a3"
-    source = "https://github.com/composer/composer/releases/download/1.8.6/composer.phar"
-    source_sha256 = "f7d23de9e6d8dc40041e81ebeb20b411aa0fb04d0838797d10b75ae5e59e12a3"
+    sha256 = "e022309c59310e10dd6220618515849143fd02eb6684fa9833d9071da9f1075e"
+    source = "https://github.com/composer/composer/releases/download/1.9.3/composer.phar"
+    source_sha256 = "e022309c59310e10dd6220618515849143fd02eb6684fa9833d9071da9f1075e"
     stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.8.6-f7d23de9.phar"
-    version = "1.8.6"
+    uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.9.3-e022309c.phar"
+    version = "1.9.3"
 
 [[stacks]]
   id = "org.cloudfoundry.stacks.cflinuxfs3"
