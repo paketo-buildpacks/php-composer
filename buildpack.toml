@@ -13,21 +13,21 @@ api = "0.2"
 
   [[metadata.dependencies]]
     id = "composer"
-    sha256 = "f9804d987308c41785b84c47949bc3f631d05770ec3aab5c24a1db9361c63086"
-    source = "https://github.com/composer/composer/releases/download/1.9.2/composer.phar"
-    source_sha256 = "f9804d987308c41785b84c47949bc3f631d05770ec3aab5c24a1db9361c63086"
-    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.9.2-f9804d98.phar"
-    version = "1.9.2"
-
-  [[metadata.dependencies]]
-    id = "composer"
     sha256 = "e022309c59310e10dd6220618515849143fd02eb6684fa9833d9071da9f1075e"
     source = "https://github.com/composer/composer/releases/download/1.9.3/composer.phar"
     source_sha256 = "e022309c59310e10dd6220618515849143fd02eb6684fa9833d9071da9f1075e"
     stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
     uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.9.3-e022309c.phar"
     version = "1.9.3"
+
+  [[metadata.dependencies]]
+    id = "composer"
+    sha256 = "57c63365eccdd4a787ebc40b9c57a4e019ab79d2f8662cea9892992d91640bf0"
+    source = "https://github.com/composer/composer/releases/download/1.10.1/composer.phar"
+    source_sha256 = "57c63365eccdd4a787ebc40b9c57a4e019ab79d2f8662cea9892992d91640bf0"
+    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
+    uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer-1.10.1-57c63365.phar"
+    version = "1.10.1"
 
 [[stacks]]
   id = "org.cloudfoundry.stacks.cflinuxfs3"
