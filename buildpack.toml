@@ -1,7 +1,7 @@
 api = "0.2"
 
 [buildpack]
-  id = "org.cloudfoundry.php-composer"
+  id = "paketo-buildpacks/php-composer"
   name = "PHP Composer Buildpack"
   version = "{{ .Version }}"
 
