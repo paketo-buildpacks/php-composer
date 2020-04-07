@@ -10,11 +10,9 @@ import (
 	"github.com/cloudfoundry/libcfbuildpack/buildpackplan"
 
 	"github.com/buildpack/libbuildpack/buildplan"
+	"github.com/cloudfoundry/libcfbuildpack/detect"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/logger"
-	"github.com/cloudfoundry/php-dist-cnb/php"
-
-	"github.com/cloudfoundry/libcfbuildpack/detect"
 	"github.com/cloudfoundry/php-composer-cnb/composer"
 )
 
@@ -52,7 +50,7 @@ func runDetect(context detect.Detect) (int, error) {
 	return context.Pass(buildplan.Plan{
 		Requires: []buildplan.Required{
 			{
-				Name:    php.Dependency,
+				Name:    "php",
 				Version: phpVersion,
 				Metadata: buildplan.Metadata{
 					"build":                     true,
@@ -103,7 +101,7 @@ func parseComposerJSON(path string) (string, string, error) {
 		return "", "", err
 	}
 
-	return composerJSON.Require.Php, php.ComposerJSONSource, nil
+	return composerJSON.Require.Php, "composer.json", nil
 }
 
 func parseComposerLock(path string) (string, string, error) {
@@ -130,5 +128,5 @@ func parseComposerLock(path string) (string, string, error) {
 		return "", "", err
 	}
 
-	return composerLock.Platform.Php, php.ComposerLockSource, nil
+	return composerLock.Platform.Php, "composer.lock", nil
 }

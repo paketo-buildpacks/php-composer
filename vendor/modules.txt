@@ -1,7 +1,5 @@
 # cloud.google.com/go v0.52.0
 cloud.google.com/go/compute/metadata
-# code.cloudfoundry.org/lager v2.0.0+incompatible
-code.cloudfoundry.org/lager
 # github.com/BurntSushi/toml v0.3.1
 github.com/BurntSushi/toml
 # github.com/Masterminds/semver v1.5.0
@@ -19,7 +17,7 @@ github.com/buildpack/libbuildpack/logger
 github.com/buildpack/libbuildpack/platform
 github.com/buildpack/libbuildpack/services
 github.com/buildpack/libbuildpack/stack
-# github.com/cloudfoundry/dagger v0.0.0-20200115142400-b69a9b4eabf4
+# github.com/cloudfoundry/dagger v0.0.0-20200213200846-c2a9723f08c4
 github.com/cloudfoundry/dagger
 github.com/cloudfoundry/dagger/utils
 # github.com/cloudfoundry/libcfbuildpack v1.91.23
@@ -34,11 +32,9 @@ github.com/cloudfoundry/libcfbuildpack/logger
 github.com/cloudfoundry/libcfbuildpack/runner
 github.com/cloudfoundry/libcfbuildpack/services
 github.com/cloudfoundry/libcfbuildpack/test
-# github.com/cloudfoundry/packit v0.0.0-20200129211718-a2b2b4f67a52
+# github.com/cloudfoundry/packit v0.0.0-20200213185904-9d0fc689e7af
 github.com/cloudfoundry/packit/pexec
-# github.com/cloudfoundry/php-dist-cnb v0.0.99
-github.com/cloudfoundry/php-dist-cnb/php
-# github.com/cloudfoundry/php-web-cnb v0.0.82
+# github.com/cloudfoundry/php-web-cnb v0.0.89
 github.com/cloudfoundry/php-web-cnb/config
 # github.com/fatih/color v1.9.0
 github.com/fatih/color

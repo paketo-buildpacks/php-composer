@@ -7,7 +7,6 @@ import (
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
-	"github.com/cloudfoundry/php-dist-cnb/php"
 	"github.com/cloudfoundry/php-web-cnb/config"
 )
 
@@ -35,7 +34,7 @@ func NewContributor(builder build.Build) (Contributor, bool, error) {
 
 	contributor := Contributor{
 		ComposerLayer: builder.Layers.DependencyLayer(dep),
-		PhpLayer:      builder.Layers.Layer(php.Dependency),
+		PhpLayer:      builder.Layers.Layer("php"),
 	}
 
 	if _, ok := plan.Metadata["build"]; ok {
