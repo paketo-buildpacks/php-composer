@@ -62,6 +62,8 @@ github.com/cloudfoundry/packit v0.0.0-20200213185904-9d0fc689e7af/go.mod h1:L9r2
 github.com/cloudfoundry/php-dist-cnb v0.0.60/go.mod h1:TxLqK4rBAV096kog8+y2Wi0nrxbDdJyzE4oJpFaST8c=
 github.com/cloudfoundry/php-dist-cnb v0.0.99 h1:WtQLSxO9NBDFSW75vkAvbYoPanHWwi/fJ0AkogS/VEc=
 github.com/cloudfoundry/php-dist-cnb v0.0.99/go.mod h1:TL8Sa90oZR2bG1A2reGLJPDlH6D296DYLmtZSI4oN+w=
+github.com/cloudfoundry/php-dist-cnb v0.0.135 h1:AxLHCAZcmNinGH4NTX58JqI0qqfFdvrZSQJw+dUPJc8=
+github.com/cloudfoundry/php-dist-cnb v0.0.135/go.mod h1:r/o7IQU/KysMVvytbC0gsztcpM0IVGpCkouIlAlsOUI=
 github.com/cloudfoundry/php-web-cnb v0.0.82 h1:3gr5/iynMvL3IwhnZu91Sm7wDuxrTtmY28/wUbCaq7U=
 github.com/cloudfoundry/php-web-cnb v0.0.82/go.mod h1:ztF8HwRl6sKIwkb1RDXlYV0Z00C8T45RkyT/HcnHxqU=
 github.com/cloudfoundry/php-web-cnb v0.0.89 h1:vEeitLVWt64W5iowQvnGj/Rbh2EwT44QdAF25aGDR2Y=

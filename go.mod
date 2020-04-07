@@ -7,7 +7,7 @@ require (
 	github.com/cloudfoundry/dagger v0.0.0-20200115142400-b69a9b4eabf4
 	github.com/cloudfoundry/libcfbuildpack v1.91.23
 	github.com/cloudfoundry/packit v0.0.0-20200129211718-a2b2b4f67a52 // indirect
-	github.com/cloudfoundry/php-dist-cnb v0.0.99
+	github.com/cloudfoundry/php-dist-cnb v0.0.135
 	github.com/cloudfoundry/php-web-cnb v0.0.89
 	github.com/golang/protobuf v1.3.3 // indirect
 	github.com/onsi/ginkgo v1.12.0 // indirect
