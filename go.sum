@@ -60,6 +60,8 @@ github.com/cloudfoundry/packit v0.0.0-20200129211718-a2b2b4f67a52/go.mod h1:p3aF
 github.com/cloudfoundry/php-dist-cnb v0.0.60/go.mod h1:TxLqK4rBAV096kog8+y2Wi0nrxbDdJyzE4oJpFaST8c=
 github.com/cloudfoundry/php-dist-cnb v0.0.99 h1:WtQLSxO9NBDFSW75vkAvbYoPanHWwi/fJ0AkogS/VEc=
 github.com/cloudfoundry/php-dist-cnb v0.0.99/go.mod h1:TL8Sa90oZR2bG1A2reGLJPDlH6D296DYLmtZSI4oN+w=
+github.com/cloudfoundry/php-dist-cnb v0.0.134 h1:OsR3WB9wsOmiOjLVg9ua+aACONjNPax5n3xDz3cTMqM=
+github.com/cloudfoundry/php-dist-cnb v0.0.134/go.mod h1:TL8Sa90oZR2bG1A2reGLJPDlH6D296DYLmtZSI4oN+w=
 github.com/cloudfoundry/php-web-cnb v0.0.82 h1:3gr5/iynMvL3IwhnZu91Sm7wDuxrTtmY28/wUbCaq7U=
 github.com/cloudfoundry/php-web-cnb v0.0.82/go.mod h1:ztF8HwRl6sKIwkb1RDXlYV0Z00C8T45RkyT/HcnHxqU=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
