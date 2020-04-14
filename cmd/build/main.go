@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cloudfoundry/php-composer-cnb/composer"
-	"github.com/cloudfoundry/php-composer-cnb/packages"
+	"github.com/paketo-buildpacks/php-composer/composer"
+	"github.com/paketo-buildpacks/php-composer/packages"
 
 	"github.com/cloudfoundry/libcfbuildpack/build"
 )

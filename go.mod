@@ -1,4 +1,4 @@
-module github.com/cloudfoundry/php-composer-cnb
+module github.com/paketo-buildpacks/php-composer
 
 go 1.12
 
