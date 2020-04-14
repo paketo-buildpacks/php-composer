@@ -2,5 +2,5 @@
 .idea
 .bin
 *.tgz
-php-composer-cnb_*
+php-composer_*
 /bin/
