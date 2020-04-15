@@ -1,7 +1,13 @@
 # PHP Composer Cloud Native Buildpack
 
+The PHP Composer CNB provides the [composer](https://getcomposer.org/) dependency. The buildpack installs the
+composer binary onto the `$PATH` which makes it available to subsequent buildpacks.
+The PHP Composer CNB will also handle composer installation as well.
+
+## Integration
+
 The PHP Composer CNB provides composer as a dependency. Downstream buildpacks
-can require the nginx dependency by generating a [Build Plan
+can require the composer dependency by generating a [Build Plan
 TOML](https://github.com/buildpacks/spec/blob/master/buildpack.md#build-plan-toml)
 file that looks like the following:
 
