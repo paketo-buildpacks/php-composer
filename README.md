@@ -49,40 +49,7 @@ This builds the buildpack's Go source using GOOS=linux by default. You can suppl
 
  ## `buildpack.yml` Configurations
 
- Specify app specific options for `php` and `composer`. All properties are optional.
-
  ```yaml
- php:
-  # this allows you to specify a version constaint for the `php` dependency
-  # any valid semver constaints (e.g. 10.* and 10.1.*) are also acceptable
-  version: 10.1.x
-
-  # text user can specify to use PHP's built-in Web Server
-  # deault: php-server
-  webserver: php-server
-
-  # directory where web app code is stored
-  # default: htdocs
-  webdirectory: htdocs
-
-  # directory where library code is stored
-  # default: lib
-  libdirectory: lib
-
-  # no default
-  script:
-
-  # default: admin@localhost
-  serveradmin: admin@localhost
-
-  # default: redis-sessions
-  redis:
-    session_store_service_name: redis-sessions
-
-  # default: memcached-sessions
-  memcached:
-    session_store_service_name: memcached-sessions
-
   composer:
     # this allows you to specify a version constaint for the `php` dependency
     # any valid semver constaints (e.g. 1.* and 1.10.*) are also acceptable
