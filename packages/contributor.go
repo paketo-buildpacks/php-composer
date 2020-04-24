@@ -16,7 +16,7 @@ import (
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
 	"github.com/paketo-buildpacks/php-composer/composer"
-	"github.com/cloudfoundry/php-web-cnb/config"
+	"github.com/paketo-buildpacks/php-web/config"
 )
 
 type Metadata struct {

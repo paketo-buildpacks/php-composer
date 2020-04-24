@@ -7,7 +7,7 @@ import (
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
-	"github.com/cloudfoundry/php-web-cnb/config"
+	"github.com/paketo-buildpacks/php-web/config"
 )
 
 type Contributor struct {
