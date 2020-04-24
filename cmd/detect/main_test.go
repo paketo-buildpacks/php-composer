@@ -11,7 +11,7 @@ import (
 	"github.com/cloudfoundry/libcfbuildpack/detect"
 	"github.com/cloudfoundry/libcfbuildpack/logger"
 	"github.com/cloudfoundry/libcfbuildpack/test"
-	"github.com/cloudfoundry/php-composer-cnb/composer"
+	"github.com/paketo-buildpacks/php-composer/composer"
 	"github.com/sclevine/spec"
 	"github.com/sclevine/spec/report"
 

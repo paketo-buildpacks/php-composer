@@ -15,7 +15,7 @@ import (
 	"github.com/cloudfoundry/libcfbuildpack/build"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/layers"
-	"github.com/cloudfoundry/php-composer-cnb/composer"
+	"github.com/paketo-buildpacks/php-composer/composer"
 	"github.com/cloudfoundry/php-web-cnb/config"
 )
 

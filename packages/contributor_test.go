@@ -12,7 +12,7 @@ import (
 	bplogger "github.com/buildpack/libbuildpack/logger"
 	"github.com/cloudfoundry/libcfbuildpack/logger"
 	"github.com/cloudfoundry/libcfbuildpack/test"
-	"github.com/cloudfoundry/php-composer-cnb/composer"
+	"github.com/paketo-buildpacks/php-composer/composer"
 
 	. "github.com/onsi/gomega"
 	"github.com/sclevine/spec"
