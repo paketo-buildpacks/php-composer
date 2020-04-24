@@ -46,3 +46,26 @@ $ ./scripts/package.sh
 ```
 
 This builds the buildpack's Go source using GOOS=linux by default. You can supply another value as the first argument to package.sh.
+
+ ## `buildpack.yml` Configurations
+
+```yaml
+composer:
+  # this allows you to specify a version constaint for the `php` dependency
+  # any valid semver constaints (e.g. 1.* and 1.10.*) are also acceptable
+  version: 1.10.x
+
+  # a list of command line install options for composer
+  # default: ["--no-dev"]
+  install_options: ["--no-dev"]
+
+  # default: vendor
+  vendor_directory: vendor
+
+  # directory where composer.json can be found
+  # default is app root
+  json_path: composer
+
+  # if included, will run `composer global` with with specified arguments
+  install_global: ["list", "of", "install", "options"]
+ ```
