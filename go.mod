@@ -8,7 +8,7 @@ require (
 	github.com/cloudfoundry/libcfbuildpack v1.91.23
 	github.com/golang/protobuf v1.3.3 // indirect
 	github.com/onsi/ginkgo v1.12.0 // indirect
-	github.com/onsi/gomega v1.9.0
+	github.com/onsi/gomega v1.10.0
 	github.com/paketo-buildpacks/php-web v0.0.99
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sclevine/spec v1.4.0
