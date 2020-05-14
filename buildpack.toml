@@ -4,6 +4,7 @@ api = "0.2"
   id = "paketo-buildpacks/php-composer"
   name = "PHP Composer Buildpack"
   version = "{{ .Version }}"
+  homepage = "https://github.com/paketo-buildpacks/php-composer"
 
 [metadata]
   include_files = ["bin/build", "bin/detect", "buildpack.toml"]
