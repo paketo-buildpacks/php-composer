@@ -132,6 +132,8 @@ github.com/paketo-buildpacks/php-web v0.0.103 h1:ikdZR3mQG1hnCApYsnhfyE0Zc9JoLJz
 github.com/paketo-buildpacks/php-web v0.0.103/go.mod h1:MZrYX2N3iSgiWCfSant2YOdyh9W4/REoUOCnT0bPQ3E=
 github.com/paketo-buildpacks/php-web v0.0.105 h1:iJwFe4PdDMOSylKT3dmLnIiHp9w7VzC+huaeXWioYno=
 github.com/paketo-buildpacks/php-web v0.0.105/go.mod h1:MZrYX2N3iSgiWCfSant2YOdyh9W4/REoUOCnT0bPQ3E=
+github.com/paketo-buildpacks/php-web v0.0.108 h1:6LUc7X1RNWnPbJBgFvMRSScF55J0gVy890Oq2ogyej8=
+github.com/paketo-buildpacks/php-web v0.0.108/go.mod h1:dyjrWgeL1Xs54SdKaHYtYI+dunJLvmXfHG1HKmjfF+k=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
