@@ -46,7 +46,7 @@ func NewContributor(builder build.Build) (Contributor, bool, error) {
 
 func (n Contributor) Contribute() error {
 	return n.ComposerLayer.Contribute(func(artifact string, layer layers.DependencyLayer) error {
-		layer.Logger.SubsequentLine("Expanding to %s", layer.Root)
+		layer.Logger.Body("Expanding to %s", layer.Root)
 
 		err := helper.CopyFile(artifact, filepath.Join(layer.Root, ComposerPHAR))
 		if err != nil {
