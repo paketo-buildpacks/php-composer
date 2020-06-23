@@ -39,7 +39,7 @@ func TestIntegrationComposerApp(t *testing.T) {
 	Expect(err).ToNot(HaveOccurred())
 	defer func() {
 		for _, buildpack := range buildpacks {
-			dagger.DeleteBuildpack(buildpack)
+			Expect(dagger.DeleteBuildpack(buildpack)).To(Succeed())
 		}
 	}()
 
@@ -54,7 +54,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 
 	it.After(func() {
 		if app != nil {
-			app.Destroy()
+			Expect(app.Destroy()).To(Succeed())
 		}
 	})
 
@@ -211,6 +211,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 
 				// Second Run through
 				app, err = dagger.PackBuildNamedImageWithEnv(app.ImageName, filepath.Join("testdata", appName), MakeBuildEnv(debug), buildpacks...)
+				Expect(err).ToNot(HaveOccurred())
 
 				Expect(app.BuildLogs()).To(MatchRegexp("PHP Composer \\S+: Reusing cached layer"))
 				Expect(app.BuildLogs()).NotTo(MatchRegexp("PHP Composer \\S+: Contributing to layer"))
@@ -248,6 +249,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 
 				// Second Run through
 				app, err = dagger.PackBuildNamedImageWithEnv(app.ImageName, filepath.Join("testdata", appName), MakeBuildEnv(debug), buildpacks...)
+				Expect(err).ToNot(HaveOccurred())
 
 				Expect(app.BuildLogs()).To(MatchRegexp("PHP Composer \\S+: Reusing cached layer"))
 				Expect(app.BuildLogs()).NotTo(MatchRegexp("PHP Composer \\S+: Contributing to layer"))
