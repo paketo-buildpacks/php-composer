@@ -145,7 +145,7 @@ func (c Contributor) configureGithubOauthToken() error {
 		if ok, err := github.checkRateLimit(); err != nil {
 			return err
 		} else if !ok {
-			c.composer.Logger.Warning("The GitHub api rate limit has been exceeded. " +
+			c.composer.Logger.BodyWarning("The GitHub api rate limit has been exceeded. " +
 				"Composer will continue by downloading from source, which might result in slower downloads. " +
 				"You can increase your rate limit with a GitHub OAuth token. " +
 				"Please obtain a GitHub OAuth token by registering your application at " +
