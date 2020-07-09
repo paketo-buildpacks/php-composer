@@ -4,30 +4,56 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/BurntSushi/toml"
 	"github.com/cloudfoundry/dagger"
+	. "github.com/onsi/gomega"
 )
 
-// PreparePhpBps builds the current buildpacks
+var (
+	composerOfflineURI string
+	phpDistOfflineURI  string
+	phpWebOfflineURI   string
+	buildpackInfo      struct {
+		Buildpack struct {
+			ID   string
+			Name string
+		}
+	}
+)
+
+func PreparePhpOfflineBps() {
+	bpRoot, err := dagger.FindBPRoot()
+	Expect(err).NotTo(HaveOccurred())
+
+	composerOfflineURI, _, err = dagger.PackageCachedBuildpack(bpRoot)
+	Expect(err).ToNot(HaveOccurred())
+
+	phpDistRepo, err := dagger.GetLatestUnpackagedCommunityBuildpack("paketo-buildpacks", "php-dist")
+	Expect(err).NotTo(HaveOccurred())
+
+	phpDistOfflineURI, _, err = dagger.PackageCachedBuildpack(phpDistRepo)
+	Expect(err).ToNot(HaveOccurred())
+
+	phpWebRepo, err := dagger.GetLatestUnpackagedCommunityBuildpack("paketo-buildpacks", "php-web")
+	Expect(err).NotTo(HaveOccurred())
+
+	phpWebOfflineURI, _, err = dagger.PackageCachedBuildpack(phpWebRepo)
+	Expect(err).ToNot(HaveOccurred())
+}
+
+// PreparePhpBps builds the current buildpacks.
 func PreparePhpBps() ([]string, error) {
 	bpRoot, err := dagger.FindBPRoot()
-	if err != nil {
-		return []string{}, err
-	}
+	Expect(err).NotTo(HaveOccurred())
 
 	composerBp, err := dagger.PackageBuildpack(bpRoot)
-	if err != nil {
-		return []string{}, err
-	}
+	Expect(err).NotTo(HaveOccurred())
 
 	phpDistBp, err := dagger.GetLatestBuildpack("php-dist-cnb")
-	if err != nil {
-		return []string{}, err
-	}
+	Expect(err).NotTo(HaveOccurred())
 
 	phpWebBp, err := dagger.GetLatestBuildpack("php-web-cnb")
-	if err != nil {
-		return []string{}, err
-	}
+	Expect(err).NotTo(HaveOccurred())
 
 	return []string{phpDistBp, composerBp, phpWebBp}, nil
 }
@@ -59,4 +85,13 @@ func PreparePhpApp(appName string, buildpacks []string, debug bool) (*dagger.App
 	app.Env["PORT"] = "8080"
 
 	return app, nil
+}
+
+func DecodeBPToml() {
+	file, err := os.Open("../buildpack.toml")
+	Expect(err).NotTo(HaveOccurred())
+	defer file.Close()
+
+	_, err = toml.DecodeReader(file, &buildpackInfo)
+	Expect(err).NotTo(HaveOccurred())
 }

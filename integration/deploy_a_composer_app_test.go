@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/cloudfoundry/dagger"
@@ -33,6 +34,7 @@ var buildpacks []string
 
 func TestIntegrationComposerApp(t *testing.T) {
 	RegisterTestingT(t)
+	DecodeBPToml()
 
 	var err error
 	buildpacks, err = PreparePhpBps()
@@ -43,7 +45,8 @@ func TestIntegrationComposerApp(t *testing.T) {
 		}
 	}()
 
-	spec.Run(t, "Deploy A Composer App", testIntegrationComposerApp, spec.Report(report.Terminal{}), spec.Parallel())
+	spec.Run(t, "Deploy A Composer App", testIntegrationComposerApp, spec.Report(report.Terminal{}))
+	spec.Run(t, "Deploy A Composer App in Offline mode", testOffline, spec.Report(report.Terminal{}))
 }
 
 func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
@@ -144,7 +147,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 			Expect(logs).To(ContainSubstring("SUCCESS"))
 
 			buildLogs := app.BuildLogs()
-			Expect(buildLogs).To(ContainSubstring("Running `php /layers/paketo-buildpacks_php-composer/composer/composer.phar config -g github-oauth.github.com "))
+			Expect(buildLogs).To(ContainSubstring(fmt.Sprintf("Running `php /layers/%s/composer/composer.phar config -g github-oauth.github.com ", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
 
 			body, _, err := app.HTTPGet("/")
 			Expect(err).ToNot(HaveOccurred())
@@ -179,10 +182,10 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 			}
 
 			buildLogs := app.BuildLogs()
-			Expect(buildLogs).To(ContainSubstring("Running `php /layers/paketo-buildpacks_php-composer/composer/composer.phar global require --no-progress friendsofphp/php-cs-fixer fxp/composer-asset-plugin:~1.3` from directory '/workspace'"))
+			Expect(buildLogs).To(ContainSubstring(fmt.Sprintf("Running `php /layers/%s/composer/composer.phar global require --no-progress friendsofphp/php-cs-fixer fxp/composer-asset-plugin:~1.3` from directory '/workspace'", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
 
 			Expect(buildLogs).To(ContainSubstring("php-cs-fixer -h"))
-			Expect(buildLogs).To(ContainSubstring("php /layers/paketo-buildpacks_php-composer/php-composer-packages/global/vendor/bin/php-cs-fixer list"))
+			Expect(buildLogs).To(ContainSubstring(fmt.Sprintf("php /layers/%s/php-composer-packages/global/vendor/bin/php-cs-fixer list", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
 
 			body, _, err := app.HTTPGet("/")
 			Expect(err).ToNot(HaveOccurred())
