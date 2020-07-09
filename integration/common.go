@@ -1,11 +1,16 @@
 package integration
 
 import (
+	"bytes"
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 	"github.com/cloudfoundry/dagger"
+	"github.com/cloudfoundry/packit/pexec"
 	. "github.com/onsi/gomega"
 )
 
@@ -46,8 +51,11 @@ func PreparePhpBps() ([]string, error) {
 	bpRoot, err := dagger.FindBPRoot()
 	Expect(err).NotTo(HaveOccurred())
 
-	composerBp, err := dagger.PackageBuildpack(bpRoot)
+	version, err := GetGitVersion()
 	Expect(err).NotTo(HaveOccurred())
+
+	composerBp, err := Package(bpRoot, version, false)
+	Expect(err).ToNot(HaveOccurred())
 
 	phpDistBp, err := dagger.GetLatestBuildpack("php-dist-cnb")
 	Expect(err).NotTo(HaveOccurred())
@@ -94,4 +102,51 @@ func DecodeBPToml() {
 
 	_, err = toml.DecodeReader(file, &buildpackInfo)
 	Expect(err).NotTo(HaveOccurred())
+}
+
+func Package(root, version string, cached bool) (string, error) {
+	var cmd *exec.Cmd
+
+	bpPath := filepath.Join(root, "artifact")
+	if cached {
+		cmd = exec.Command(".bin/packager", "--archive", "--version", version, fmt.Sprintf("%s-cached", bpPath))
+	} else {
+		cmd = exec.Command(".bin/packager", "--archive", "--uncached", "--version", version, bpPath)
+	}
+
+	cmd.Env = append(os.Environ(), fmt.Sprintf("PACKAGE_DIR=%s", bpPath))
+	cmd.Dir = root
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+
+	if cached {
+		return fmt.Sprintf("%s-cached.tgz", bpPath), err
+	}
+
+	return fmt.Sprintf("%s.tgz", bpPath), err
+}
+
+func GetGitVersion() (string, error) {
+	gitExec := pexec.NewExecutable("git")
+	revListOut := bytes.NewBuffer(nil)
+
+	err := gitExec.Execute(pexec.Execution{
+		Args:   []string{"rev-list", "--tags", "--max-count=1"},
+		Stdout: revListOut,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	stdout := bytes.NewBuffer(nil)
+	err = gitExec.Execute(pexec.Execution{
+		Args:   []string{"describe", "--tags", strings.TrimSpace(revListOut.String())},
+		Stdout: stdout,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(strings.TrimPrefix(stdout.String(), "v")), nil
 }

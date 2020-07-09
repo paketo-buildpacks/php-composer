@@ -7,6 +7,7 @@ require (
 	github.com/buildpack/libbuildpack v1.25.11
 	github.com/cloudfoundry/dagger v0.0.0-20200409132447-59248c69607b
 	github.com/cloudfoundry/libcfbuildpack v1.91.23
+	github.com/cloudfoundry/packit v0.0.4
 	github.com/onsi/gomega v1.10.1
 	github.com/paketo-buildpacks/occam v0.0.16
 	github.com/paketo-buildpacks/php-web v0.0.113
