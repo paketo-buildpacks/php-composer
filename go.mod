@@ -10,7 +10,7 @@ require (
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/mitchellh/mapstructure v1.3.2 // indirect
 	github.com/onsi/gomega v1.10.1
-	github.com/paketo-buildpacks/php-web v0.0.111
+	github.com/paketo-buildpacks/php-web v0.0.113
 	github.com/sclevine/spec v1.4.0
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
