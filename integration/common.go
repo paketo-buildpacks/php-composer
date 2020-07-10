@@ -9,12 +9,12 @@ import (
 
 // PreparePhpBps builds the current buildpacks
 func PreparePhpBps() ([]string, error) {
-	bpRoot, err := dagger.FindBPRoot()
+	bpRoot, err := filepath.Abs("./..")
 	if err != nil {
 		return []string{}, err
 	}
 
-	composerBp, err := dagger.PackageBuildpack(bpRoot)
+	composerBp, err := Package(bpRoot, "1.2.3", false)
 	if err != nil {
 		return []string{}, err
 	}
