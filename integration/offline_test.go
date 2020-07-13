@@ -32,6 +32,12 @@ func testOffline(t *testing.T, context spec.G, it spec.S) {
 		PreparePhpOfflineBps()
 	})
 
+	it.After(func() {
+		Expect(os.RemoveAll(composerOfflineURI)).To(Succeed())
+		Expect(os.RemoveAll(phpDistOfflineURI)).To(Succeed())
+		Expect(os.RemoveAll(phpWebOfflineURI)).To(Succeed())
+	})
+
 	context("when offline", func() {
 		var (
 			image     occam.Image
