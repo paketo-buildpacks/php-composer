@@ -27,22 +27,25 @@ var (
 )
 
 func PreparePhpOfflineBps() {
-	bpRoot, err := dagger.FindBPRoot()
-	Expect(err).NotTo(HaveOccurred())
+	bpRoot, err := filepath.Abs("./..")
+	Expect(err).ToNot(HaveOccurred())
 
-	composerOfflineURI, _, err = dagger.PackageCachedBuildpack(bpRoot)
+	version, err := GetGitVersion()
+	Expect(err).ToNot(HaveOccurred())
+
+	composerOfflineURI, err = Package(bpRoot, version, true)
 	Expect(err).ToNot(HaveOccurred())
 
 	phpDistRepo, err := dagger.GetLatestUnpackagedCommunityBuildpack("paketo-buildpacks", "php-dist")
 	Expect(err).NotTo(HaveOccurred())
 
-	phpDistOfflineURI, _, err = dagger.PackageCachedBuildpack(phpDistRepo)
+	phpDistOfflineURI, err = Package(phpDistRepo, "1.2.3", true)
 	Expect(err).ToNot(HaveOccurred())
 
 	phpWebRepo, err := dagger.GetLatestUnpackagedCommunityBuildpack("paketo-buildpacks", "php-web")
 	Expect(err).NotTo(HaveOccurred())
 
-	phpWebOfflineURI, _, err = dagger.PackageCachedBuildpack(phpWebRepo)
+	phpWebOfflineURI, err = Package(phpWebRepo, "1.2.3", true)
 	Expect(err).ToNot(HaveOccurred())
 }
 
@@ -108,24 +111,31 @@ func DecodeBPToml() {
 func Package(root, version string, cached bool) (string, error) {
 	var cmd *exec.Cmd
 
+	dir, err := filepath.Abs("./..")
+	if err != nil {
+		return "", err
+	}
+
 	bpPath := filepath.Join(root, "artifact")
 	if cached {
-		cmd = exec.Command(".bin/packager", "--archive", "--version", version, fmt.Sprintf("%s-cached", bpPath))
+		cmd = exec.Command(filepath.Join(dir, ".bin", "packager"), "--archive", "--version", version, fmt.Sprintf("%s-cached", bpPath))
 	} else {
-		cmd = exec.Command(".bin/packager", "--archive", "--uncached", "--version", version, bpPath)
+		cmd = exec.Command(filepath.Join(dir, ".bin", "packager"), "--archive", "--uncached", "--version", version, bpPath)
 	}
 
 	cmd.Env = append(os.Environ(), fmt.Sprintf("PACKAGE_DIR=%s", bpPath))
 	cmd.Dir = root
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-
-	if cached {
-		return fmt.Sprintf("%s-cached.tgz", bpPath), err
+	if err := cmd.Run(); err != nil {
+		return "", err
 	}
 
-	return fmt.Sprintf("%s.tgz", bpPath), err
+	if cached {
+		return fmt.Sprintf("%s-cached.tgz", bpPath), nil
+	}
+
+	return fmt.Sprintf("%s.tgz", bpPath), nil
 }
 
 func GetGitVersion() (string, error) {
