@@ -170,6 +170,8 @@ github.com/paketo-buildpacks/packit v0.2.1 h1:MWvvGkj83clltK0kqF1+wHjcfWmGTRe254
 github.com/paketo-buildpacks/packit v0.2.1/go.mod h1:b40wtWWAcgB47+vYGDD9KKhzOtBjI8KPqGxwGvV+XNs=
 github.com/paketo-buildpacks/php-web v0.0.113 h1:lFjsMGEdpRorTVxBxu4zFNv3rjVu8bY2u5e+bDOEGeo=
 github.com/paketo-buildpacks/php-web v0.0.113/go.mod h1:dyjrWgeL1Xs54SdKaHYtYI+dunJLvmXfHG1HKmjfF+k=
+github.com/paketo-buildpacks/php-web v0.0.115 h1:P1eQLhM4gQ7719n4nSF9PdJxxaCWlxIJ6k5bZBukwrc=
+github.com/paketo-buildpacks/php-web v0.0.115/go.mod h1:oaKyIIcDB05xcBMLU7qWExuCM43MZGp+u3QwfwhJJ6Y=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
