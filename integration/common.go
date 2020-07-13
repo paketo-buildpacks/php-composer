@@ -10,8 +10,8 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/cloudfoundry/dagger"
-	"github.com/cloudfoundry/packit/pexec"
 	. "github.com/onsi/gomega"
+	"github.com/paketo-buildpacks/packit/pexec"
 )
 
 var (
