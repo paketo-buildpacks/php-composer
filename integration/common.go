@@ -48,14 +48,15 @@ func PreparePhpOfflineBps() {
 
 // PreparePhpBps builds the current buildpacks.
 func PreparePhpBps() ([]string, error) {
-	bpRoot, err := dagger.FindBPRoot()
-	Expect(err).NotTo(HaveOccurred())
+	bpRoot, err := filepath.Abs("./..")
+	if err != nil {
+		return []string{}, err
+	}
 
-	version, err := GetGitVersion()
-	Expect(err).NotTo(HaveOccurred())
-
-	composerBp, err := Package(bpRoot, version, false)
-	Expect(err).ToNot(HaveOccurred())
+	composerBp, err := Package(bpRoot, "1.2.3", false)
+	if err != nil {
+		return []string{}, err
+	}
 
 	phpDistBp, err := dagger.GetLatestBuildpack("php-dist-cnb")
 	Expect(err).NotTo(HaveOccurred())
