@@ -168,6 +168,8 @@ github.com/paketo-buildpacks/occam v0.0.16/go.mod h1:i3WI2yc5Nji45iNpW+IiiEy3f2B
 github.com/paketo-buildpacks/packit v0.1.0/go.mod h1:b40wtWWAcgB47+vYGDD9KKhzOtBjI8KPqGxwGvV+XNs=
 github.com/paketo-buildpacks/packit v0.2.1 h1:MWvvGkj83clltK0kqF1+wHjcfWmGTRe254h8s3PZyF4=
 github.com/paketo-buildpacks/packit v0.2.1/go.mod h1:b40wtWWAcgB47+vYGDD9KKhzOtBjI8KPqGxwGvV+XNs=
+github.com/paketo-buildpacks/packit v0.2.2 h1:iaTlvhF5sWiuBlz/NAM+Ycj9XkXK2tgyuZD81HLsVmY=
+github.com/paketo-buildpacks/packit v0.2.2/go.mod h1:b40wtWWAcgB47+vYGDD9KKhzOtBjI8KPqGxwGvV+XNs=
 github.com/paketo-buildpacks/php-web v0.0.113 h1:lFjsMGEdpRorTVxBxu4zFNv3rjVu8bY2u5e+bDOEGeo=
 github.com/paketo-buildpacks/php-web v0.0.113/go.mod h1:dyjrWgeL1Xs54SdKaHYtYI+dunJLvmXfHG1HKmjfF+k=
 github.com/paketo-buildpacks/php-web v0.0.115 h1:P1eQLhM4gQ7719n4nSF9PdJxxaCWlxIJ6k5bZBukwrc=
