@@ -1,17 +1,16 @@
 package integration
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 
 	"github.com/BurntSushi/toml"
 	"github.com/cloudfoundry/dagger"
+	"github.com/paketo-buildpacks/occam"
+
 	. "github.com/onsi/gomega"
-	"github.com/paketo-buildpacks/packit/pexec"
 )
 
 var (
@@ -30,16 +29,15 @@ func PreparePhpOfflineBps() {
 	bpRoot, err := filepath.Abs("./..")
 	Expect(err).ToNot(HaveOccurred())
 
-	version, err := GetGitVersion()
+	composerOfflineURI, err = Package(bpRoot, "1.2.3", true)
 	Expect(err).ToNot(HaveOccurred())
 
-	composerOfflineURI, err = Package(bpRoot, version, true)
-	Expect(err).ToNot(HaveOccurred())
+	buildpackStore := occam.NewBuildpackStore()
 
-	phpDistRepo, err := dagger.GetLatestUnpackagedCommunityBuildpack("paketo-buildpacks", "php-dist")
-	Expect(err).NotTo(HaveOccurred())
-
-	phpDistOfflineURI, err = Package(phpDistRepo, "1.2.3", true)
+	phpDistOfflineURI, err = buildpackStore.Get.
+		WithVersion("1.2.3").
+		WithOfflineDependencies().
+		Execute("github.com/paketo-buildpacks/php-dist")
 	Expect(err).ToNot(HaveOccurred())
 
 	phpWebRepo, err := dagger.GetLatestUnpackagedCommunityBuildpack("paketo-buildpacks", "php-web")
@@ -136,28 +134,4 @@ func Package(root, version string, cached bool) (string, error) {
 	}
 
 	return fmt.Sprintf("%s.tgz", bpPath), nil
-}
-
-func GetGitVersion() (string, error) {
-	gitExec := pexec.NewExecutable("git")
-	revListOut := bytes.NewBuffer(nil)
-
-	err := gitExec.Execute(pexec.Execution{
-		Args:   []string{"rev-list", "--tags", "--max-count=1"},
-		Stdout: revListOut,
-	})
-	if err != nil {
-		return "", err
-	}
-
-	stdout := bytes.NewBuffer(nil)
-	err = gitExec.Execute(pexec.Execution{
-		Args:   []string{"describe", "--tags", strings.TrimSpace(revListOut.String())},
-		Stdout: stdout,
-	})
-	if err != nil {
-		return "", err
-	}
-
-	return strings.TrimSpace(strings.TrimPrefix(stdout.String(), "v")), nil
 }
