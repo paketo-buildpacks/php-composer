@@ -12,7 +12,7 @@ require (
 	github.com/onsi/gomega v1.10.1
 	github.com/paketo-buildpacks/occam v0.0.16
 	github.com/paketo-buildpacks/packit v0.2.2
-	github.com/paketo-buildpacks/php-web v0.0.116
+	github.com/paketo-buildpacks/php-web v0.0.118
 	github.com/sclevine/spec v1.4.0
 	golang.org/x/sys v0.0.0-20200720211630-cb9d2d5c5666 // indirect
 	gopkg.in/yaml.v2 v2.3.0
