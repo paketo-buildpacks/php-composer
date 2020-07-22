@@ -1,7 +1,6 @@
 package integration
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -13,8 +12,6 @@ import (
 	"github.com/paketo-buildpacks/occam"
 
 	. "github.com/onsi/gomega"
-	"github.com/paketo-buildpacks/occam"
-	"github.com/paketo-buildpacks/packit/pexec"
 )
 
 var (
