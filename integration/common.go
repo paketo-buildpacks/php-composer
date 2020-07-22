@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -49,6 +50,16 @@ func PreparePhpOfflineBps() {
 
 // PreparePhpBps builds the current buildpacks.
 func PreparePhpBps() ([]string, error) {
+	var config struct {
+		PhpDist string `json:"php-dist"`
+	}
+
+	file, err := os.Open("../integration.json")
+	Expect(err).ToNot(HaveOccurred())
+	defer file.Close()
+
+	Expect(json.NewDecoder(file).Decode(&config)).To(Succeed())
+
 	bpRoot, err := filepath.Abs("./..")
 	if err != nil {
 		return []string{}, err
@@ -59,8 +70,9 @@ func PreparePhpBps() ([]string, error) {
 		return []string{}, err
 	}
 
-	phpDistBp, err := dagger.GetLatestBuildpack("php-dist-cnb")
-	Expect(err).NotTo(HaveOccurred())
+	buildpackStore := occam.NewBuildpackStore()
+	phpDistBp, err := buildpackStore.Get.Execute(config.PhpDist)
+	Expect(err).ToNot(HaveOccurred())
 
 	phpWebBp, err := dagger.GetLatestBuildpack("php-web-cnb")
 	Expect(err).NotTo(HaveOccurred())
