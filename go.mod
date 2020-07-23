@@ -10,7 +10,7 @@ require (
 	github.com/cloudfoundry/libcfbuildpack v1.91.23
 	github.com/mitchellh/mapstructure v1.3.2 // indirect
 	github.com/onsi/gomega v1.10.1
-	github.com/paketo-buildpacks/occam v0.0.16
+	github.com/paketo-buildpacks/occam v0.0.17
 	github.com/paketo-buildpacks/packit v0.2.2
 	github.com/paketo-buildpacks/php-web v0.0.116
 	github.com/sclevine/spec v1.4.0
