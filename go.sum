@@ -38,6 +38,7 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/ForestEckhardt/freezer v0.0.0-20200630185456-a126adb8de1b h1:5ah4g+sbKU2LvMIOeR0+a4PIzrXRxJTqjZwXOdOdQsA=
 github.com/ForestEckhardt/freezer v0.0.0-20200630185456-a126adb8de1b/go.mod h1:Tp5MaiHIfM9TOqTFYlqHsittmOnFGsUcUVDX+AtbNrI=
+github.com/ForestEckhardt/freezer v0.0.1/go.mod h1:Tp5MaiHIfM9TOqTFYlqHsittmOnFGsUcUVDX+AtbNrI=
 github.com/Masterminds/semver v1.5.0 h1:H65muMkzWKEuNDnfl9d70GUjFniHKHRbFPGBuZ3QEww=
 github.com/Masterminds/semver v1.5.0/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF078ddwwvV3Y=
 github.com/VividCortex/ewma v1.1.1 h1:MnEK4VOv6n0RSY4vtRe3h11qjxL3+t0B8yOL8iMXdcM=
@@ -172,6 +173,7 @@ github.com/onsi/gomega v1.10.1 h1:o0+MgICZLuZ7xjH7Vx6zS/zcu93/BEp1VwkIW1mEXCE=
 github.com/onsi/gomega v1.10.1/go.mod h1:iN09h71vgCQne3DLsj+A5owkum+a2tYe+TOCB1ybHNo=
 github.com/paketo-buildpacks/occam v0.0.16 h1:RnEizv5F5O5LL1VeOiOh8WkNosybbEPOMys6730yopw=
 github.com/paketo-buildpacks/occam v0.0.16/go.mod h1:i3WI2yc5Nji45iNpW+IiiEy3f2BvbIfbLi24VKVOK0I=
+github.com/paketo-buildpacks/occam v0.0.17/go.mod h1:9TFuRmC3OB8DlaBdd0hGPZQidnsmGmUlnLQTrltZB5Q=
 github.com/paketo-buildpacks/packit v0.1.0/go.mod h1:b40wtWWAcgB47+vYGDD9KKhzOtBjI8KPqGxwGvV+XNs=
 github.com/paketo-buildpacks/packit v0.2.1 h1:MWvvGkj83clltK0kqF1+wHjcfWmGTRe254h8s3PZyF4=
 github.com/paketo-buildpacks/packit v0.2.1/go.mod h1:b40wtWWAcgB47+vYGDD9KKhzOtBjI8KPqGxwGvV+XNs=
@@ -187,6 +189,8 @@ github.com/paketo-buildpacks/php-web v0.0.116 h1:zjhoU8qmto+wtZc0JHFoZ6qbaoNbS3l
 github.com/paketo-buildpacks/php-web v0.0.116/go.mod h1:LdrFnndZp2yEw5/tqO98qz1k0FwjxRWl4CeiDg0uCRE=
 github.com/paketo-buildpacks/php-web v0.0.119 h1:xUampqE0jqCLbz4UBbYEM9YR7N/1GTsKBbVneY5YdqI=
 github.com/paketo-buildpacks/php-web v0.0.119/go.mod h1:LdrFnndZp2yEw5/tqO98qz1k0FwjxRWl4CeiDg0uCRE=
+github.com/paketo-buildpacks/php-web v0.0.122 h1:2K3pCsUzRRjgvK7uzfFeTYb0q9Tgnx1caiRLWWfyJt4=
+github.com/paketo-buildpacks/php-web v0.0.122/go.mod h1:A2Kx3ltkXaXVOUsbg2IUhRqj+hpwxDXRfsKnJVsvbvQ=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
