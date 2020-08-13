@@ -2,7 +2,7 @@ api = "0.2"
 
 [buildpack]
   id = "paketo-buildpacks/php-composer"
-  name = "PHP Composer Buildpack"
+  name = "Paketo PHP Composer Buildpack"
   version = "{{ .Version }}"
   homepage = "https://github.com/paketo-buildpacks/php-composer"
 
