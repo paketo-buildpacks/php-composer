@@ -51,7 +51,7 @@ This builds the buildpack's Go source using GOOS=linux by default. You can suppl
 
 ```yaml
 composer:
-  # this allows you to specify a version constaint for the `php` dependency
+  # this allows you to specify a version constaint for the `composer` dependency
   # any valid semver constaints (e.g. 1.* and 1.10.*) are also acceptable
   version: 1.10.x
 
