@@ -14,21 +14,21 @@ api = "0.2"
 
   [[metadata.dependencies]]
     id = "composer"
-    sha256 = "a69df12e86a0a18fbedfc91a33d5f9acc5cf939576e0258326074fc1b2ee1aea"
-    source = "https://github.com/composer/composer/releases/download/1.10.15/composer.phar"
-    source_sha256 = "a69df12e86a0a18fbedfc91a33d5f9acc5cf939576e0258326074fc1b2ee1aea"
-    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer_1.10.15_linux_noarch_any-stack_a69df12e.phar"
-    version = "1.10.15"
-
-  [[metadata.dependencies]]
-    id = "composer"
     sha256 = "e494bb438e44b9e4782c16940b229a8c46ea8a3baa9b908bf9db310cd0171ee2"
     source = "https://github.com/composer/composer/releases/download/1.10.16/composer.phar"
     source_sha256 = "e494bb438e44b9e4782c16940b229a8c46ea8a3baa9b908bf9db310cd0171ee2"
     stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
     uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer_1.10.16_linux_noarch_any-stack_e494bb43.phar"
     version = "1.10.16"
+
+  [[metadata.dependencies]]
+    id = "composer"
+    sha256 = "c3b2bc477429c923c69f7f9b137e06b2a93c6a1e192d40ffad1741ee5d54760d"
+    source = "https://github.com/composer/composer/releases/download/2.0.4/composer.phar"
+    source_sha256 = "c3b2bc477429c923c69f7f9b137e06b2a93c6a1e192d40ffad1741ee5d54760d"
+    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
+    uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer_2.0.4_linux_noarch_any-stack_c3b2bc47.phar"
+    version = "2.0.4"
 
 [[stacks]]
   id = "io.buildpacks.stacks.bionic"
