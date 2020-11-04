@@ -27,6 +27,16 @@ var (
 )
 
 func PreparePhpOfflineBps() {
+	var config struct {
+		PhpDistOffline string `json:"php-dist"`
+	}
+
+	file, err := os.Open("../integration.json")
+	Expect(err).ToNot(HaveOccurred())
+	defer file.Close()
+
+	Expect(json.NewDecoder(file).Decode(&config)).To(Succeed())
+
 	bpRoot, err := filepath.Abs("./..")
 	Expect(err).ToNot(HaveOccurred())
 
@@ -38,7 +48,7 @@ func PreparePhpOfflineBps() {
 	phpDistOfflineURI, err = buildpackStore.Get.
 		WithVersion("1.2.3").
 		WithOfflineDependencies().
-		Execute("github.com/paketo-buildpacks/php-dist")
+		Execute(config.PhpDistOffline)
 	Expect(err).ToNot(HaveOccurred())
 
 	phpWebRepo, err := dagger.GetLatestUnpackagedCommunityBuildpack("paketo-buildpacks", "php-web")
