@@ -4,4 +4,4 @@ php:
 composer:
   install_global:
   - friendsofphp/php-cs-fixer
-  - fxp/composer-asset-plugin:~1.3
+  - squizlabs/php_codesniffer=*

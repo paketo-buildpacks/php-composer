@@ -182,7 +182,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 			}
 
 			buildLogs := app.BuildLogs()
-			Expect(buildLogs).To(ContainSubstring(fmt.Sprintf("Running `php /layers/%s/composer/composer.phar global require --no-progress friendsofphp/php-cs-fixer fxp/composer-asset-plugin:~1.3` from directory '/workspace'", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
+			Expect(buildLogs).To(ContainSubstring(fmt.Sprintf("Running `php /layers/%s/composer/composer.phar global require --no-progress friendsofphp/php-cs-fixer squizlabs/php_codesniffer=*` from directory '/workspace'", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
 
 			Expect(buildLogs).To(ContainSubstring("php-cs-fixer -h"))
 			Expect(buildLogs).To(ContainSubstring(fmt.Sprintf("php /layers/%s/php-composer-packages/global/vendor/bin/php-cs-fixer list", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
@@ -237,7 +237,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 				app, err := PreparePhpApp(appName, buildpacks, debug)
 				Expect(err).ToNot(HaveOccurred())
 
-				Expect(app.BuildLogs()).To(ContainSubstring("Nothing to install or update"))
+				Expect(app.BuildLogs()).To(ContainSubstring("Nothing to install"))
 
 				Expect(app.Start()).To(Succeed())
 
