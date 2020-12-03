@@ -185,7 +185,7 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 			Expect(buildLogs).To(ContainSubstring(fmt.Sprintf("Running `php /layers/%s/composer/composer.phar global require --no-progress friendsofphp/php-cs-fixer squizlabs/php_codesniffer=*` from directory '/workspace'", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
 
 			Expect(buildLogs).To(ContainSubstring("php-cs-fixer -h"))
-			Expect(buildLogs).To(ContainSubstring(fmt.Sprintf("php /layers/%s/php-composer-packages/global/vendor/bin/php-cs-fixer list", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
+			Expect(buildLogs).To(ContainSubstring(fmt.Sprintf("/layers/%s/php-composer-packages/global/vendor/bin/php-cs-fixer list", strings.ReplaceAll(buildpackInfo.Buildpack.ID, "/", "_"))))
 
 			body, _, err := app.HTTPGet("/")
 			Expect(err).ToNot(HaveOccurred())
