@@ -75,12 +75,15 @@ func testOffline(t *testing.T, context spec.G, it spec.S) {
 			Expect(logs.String()).To(ContainSubstring(buildpackInfo.Buildpack.Name))
 			Expect(logs.String()).NotTo(ContainSubstring("Downloading"))
 
-			container, err = docker.Container.Run.WithEnv(map[string]string{"PORT": "8080"}).Execute(image.ID)
-			Expect(err).NotTo(HaveOccurred())
+			container, err = docker.Container.Run.
+				WithEnv(map[string]string{"PORT": "8080"}).
+				WithPublish("8080").
+				Execute(image.ID)
+			Expect(err).ToNot(HaveOccurred())
 
 			Eventually(container).Should(BeAvailable(), logs.String())
 
-			response, err := http.Get(fmt.Sprintf("http://localhost:%s", container.HostPort()))
+			response, err := http.Get(fmt.Sprintf("http://localhost:%s", container.HostPort("8080")))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(response.StatusCode).To(Equal(http.StatusOK))
 
