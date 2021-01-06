@@ -59,10 +59,11 @@ function tools::install() {
   util::tools::pack::install \
     --directory "${BUILDPACKDIR}/.bin"
 
-  util::tools::jam::install \
-    --directory "${BUILDPACKDIR}/.bin"
+  if [[ -f "${BUILDPACKDIR}/.packit" ]]; then
+    util::tools::jam::install \
+      --directory "${BUILDPACKDIR}/.bin"
 
-  if [[ ! -f "${BUILDPACKDIR}/.packit" ]]; then
+  else
     util::tools::packager::install \
       --directory "${BUILDPACKDIR}/.bin"
   fi
