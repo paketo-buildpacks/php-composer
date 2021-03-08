@@ -1,11 +1,11 @@
 module github.com/paketo-buildpacks/php-composer
 
-go 1.14
+go 1.16
 
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/buildpack/libbuildpack v1.25.11
-	github.com/cloudfoundry/dagger v0.0.0-20200710140748-bed4cf02eaf9
+	github.com/cloudfoundry/dagger v0.0.0-20210216195810-9b382f61bcc3
 	github.com/cloudfoundry/libcfbuildpack v1.91.23
 	github.com/onsi/gomega v1.11.0
 	github.com/paketo-buildpacks/occam v0.1.2
