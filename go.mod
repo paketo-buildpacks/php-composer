@@ -11,5 +11,6 @@ require (
 	github.com/paketo-buildpacks/occam v0.1.2
 	github.com/paketo-buildpacks/php-web v0.1.0
 	github.com/sclevine/spec v1.4.0
+	golang.org/x/net v0.0.0-20210410081132-afb366fc7cd1 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
