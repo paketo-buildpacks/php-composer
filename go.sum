@@ -67,8 +67,9 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/ForestEckhardt/freezer v0.0.3/go.mod h1:/uALnKwx6+QSyKdZYC/FjihjQeI4XsE7i3RXPKyM8Vs=
-github.com/ForestEckhardt/freezer v0.0.6 h1:Wim1Q7V1sqfUUD8JTSydQXUW40qM9L0kqGxYMuWrAfc=
 github.com/ForestEckhardt/freezer v0.0.6/go.mod h1:1EtaHlohBGk0zF1l4w3wroNOdEBTWL0PHNIgvjeisaE=
+github.com/ForestEckhardt/freezer v0.0.7 h1:/hRJtyy5gzHK22ax2VFhjSi5400uItoVJNewTepwDeo=
+github.com/ForestEckhardt/freezer v0.0.7/go.mod h1:1EtaHlohBGk0zF1l4w3wroNOdEBTWL0PHNIgvjeisaE=
 github.com/GoogleCloudPlatform/k8s-cloud-provider v0.0.0-20190822182118-27a4ced34534/go.mod h1:iroGtC8B3tQiqtds1l+mgk/BBOrxbqjH+eUfFQYRc14=
 github.com/Masterminds/semver v1.5.0 h1:H65muMkzWKEuNDnfl9d70GUjFniHKHRbFPGBuZ3QEww=
 github.com/Masterminds/semver v1.5.0/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF078ddwwvV3Y=
@@ -420,8 +421,9 @@ github.com/opencontainers/go-digest v1.0.0-rc1/go.mod h1:cMLVZDEM3+U2I4VmLI6N8jQ
 github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
 github.com/opencontainers/image-spec v1.0.1/go.mod h1:BtxoFyWECRxE4U/7sNtV5W15zMzWCbyJoFRP3s7yZA0=
 github.com/paketo-buildpacks/occam v0.0.22/go.mod h1:aPNRyPEgYp4a01O4UKAuFWYnRmY4ujeuV3x6yAa1hxs=
-github.com/paketo-buildpacks/occam v0.1.2 h1:xNJYB0ruwLsrTwdADJeGxSJvyj/oy2qcMuOvlLTJ/JE=
 github.com/paketo-buildpacks/occam v0.1.2/go.mod h1:bV568K2TWVHsuDBF9akaYA7HViQRYMoU1OwhwNy6PE0=
+github.com/paketo-buildpacks/occam v0.1.3 h1:fbpv8xkQmKcW3ZDLOlQ7zz2hD3ZxhLOm1Z5xNAqi25Y=
+github.com/paketo-buildpacks/occam v0.1.3/go.mod h1:Vd3rMqdKHvuQd4wXV5p2tNplqeFTSNL1BvYWNYfLpDE=
 github.com/paketo-buildpacks/packit v0.5.0/go.mod h1:ATLZccUzqEAyPlirdka8hs+XNqS4pyJ/tjyU1NXJKm8=
 github.com/paketo-buildpacks/packit v0.7.0/go.mod h1:b498Gw+ZwwAxhqGpeRprrLKr5m9dVdRGvdwEDq2GBEk=
 github.com/paketo-buildpacks/packit v0.11.0 h1:zUdeQuU2QBCrzRM/8dlj0VeHx+yqSaLF+EF4b2lNU+c=
