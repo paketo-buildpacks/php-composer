@@ -1,10 +1,10 @@
 api = "0.4"
 
 [buildpack]
-  homepage = "https://github.com/paketo-buildpacks/php-composer"
   id = "paketo-buildpacks/php-composer"
   name = "Paketo PHP Composer Buildpack"
   version = "{{ .Version }}"
+  homepage = "https://github.com/paketo-buildpacks/php-composer"
 
 [metadata]
   include_files = ["bin/build", "bin/detect", "buildpack.toml"]
@@ -14,21 +14,21 @@ api = "0.4"
 
   [[metadata.dependencies]]
     id = "composer"
-    sha256 = "2f8e8f684db5d6bd36a549629f3676e48f008624f499b13dfc7afa2f9cbde16e"
-    source = "https://github.com/composer/composer/releases/download/2.1.0/composer.phar"
-    source_sha256 = "2f8e8f684db5d6bd36a549629f3676e48f008624f499b13dfc7afa2f9cbde16e"
-    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer_2.1.0_linux_noarch_any-stack_2f8e8f68.phar"
-    version = "2.1.0"
-
-  [[metadata.dependencies]]
-    id = "composer"
     sha256 = "445a577f3d7966ed2327182380047a38179068ad1292f6b88de4e071920121ce"
     source = "https://github.com/composer/composer/releases/download/2.1.1/composer.phar"
     source_sha256 = "445a577f3d7966ed2327182380047a38179068ad1292f6b88de4e071920121ce"
     stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
     uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer_2.1.1_linux_noarch_any-stack_445a577f.phar"
     version = "2.1.1"
+
+  [[metadata.dependencies]]
+    id = "composer"
+    sha256 = "2dec01094a6bd571dcc0ed796b6e180aca3833646834b66eb743b7d66787a43d"
+    source = "https://github.com/composer/composer/releases/download/2.1.2/composer.phar"
+    source_sha256 = "2dec01094a6bd571dcc0ed796b6e180aca3833646834b66eb743b7d66787a43d"
+    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
+    uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer_2.1.2_linux_noarch_any-stack_2dec0109.phar"
+    version = "2.1.2"
 
 [[stacks]]
   id = "io.buildpacks.stacks.bionic"
