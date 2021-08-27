@@ -1,4 +1,4 @@
 {
   "php-dist": "github.com/paketo-buildpacks/php-dist",
-  "builder":"index.docker.io/paketobuildpacks/builder:full-cf"
+  "builder":"index.docker.io/paketobuildpacks/builder:buildpackless-full"
 }
