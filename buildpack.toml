@@ -14,21 +14,28 @@ api = "0.4"
 
   [[metadata.dependencies]]
     id = "composer"
+    purl = "pkg:generic/composer@2.1.7?checksum=2936587e1babafa50d15eacf9fe775e825ed2e1f051c61acd3fa4f6af7720e94&download_url=https://getcomposer.org/download/2.1.7/composer.phar"
     sha256 = "2936587e1babafa50d15eacf9fe775e825ed2e1f051c61acd3fa4f6af7720e94"
-    source = "https://github.com/composer/composer/releases/download/2.1.7/composer.phar"
+    source = "https://getcomposer.org/download/2.1.7/composer.phar"
     source_sha256 = "2936587e1babafa50d15eacf9fe775e825ed2e1f051c61acd3fa4f6af7720e94"
-    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer_2.1.7_linux_noarch_any-stack_2936587e.phar"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/composer/composer_2.1.7_linux_noarch_any-stack_2936587e.phar"
     version = "2.1.7"
 
   [[metadata.dependencies]]
     id = "composer"
+    purl = "pkg:generic/composer@2.1.8?checksum=77b8aca1b41174a67f27be066558f8a96f489916f4cded2bead3cab6a3f33590&download_url=https://getcomposer.org/download/2.1.8/composer.phar"
     sha256 = "77b8aca1b41174a67f27be066558f8a96f489916f4cded2bead3cab6a3f33590"
-    source = "https://github.com/composer/composer/releases/download/2.1.8/composer.phar"
+    source = "https://getcomposer.org/download/2.1.8/composer.phar"
     source_sha256 = "77b8aca1b41174a67f27be066558f8a96f489916f4cded2bead3cab6a3f33590"
-    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/composer/composer_2.1.8_linux_noarch_any-stack_77b8aca1.phar"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/composer/composer_2.1.8_linux_noarch_any-stack_77b8aca1.phar"
     version = "2.1.8"
+
+  [[metadata.dependency-constraints]]
+    constraint = "*"
+    id = "composer"
+    patches = 2
 
 [[stacks]]
   id = "io.buildpacks.stacks.bionic"
