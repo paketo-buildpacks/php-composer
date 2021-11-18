@@ -9,7 +9,7 @@ require (
 	github.com/cloudfoundry/libcfbuildpack v1.91.23
 	github.com/onsi/gomega v1.17.0
 	github.com/paketo-buildpacks/occam v0.1.4
-	github.com/paketo-buildpacks/php-web v0.1.2
+	github.com/paketo-buildpacks/php-web v0.1.3
 	github.com/sclevine/spec v1.4.0
 	gopkg.in/yaml.v2 v2.4.0
 )
