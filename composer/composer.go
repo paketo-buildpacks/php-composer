@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/Masterminds/semver"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
 	"github.com/cloudfoundry/libcfbuildpack/logger"
 	"github.com/paketo-buildpacks/php-composer/runner"
@@ -168,4 +169,58 @@ func LoadComposerBuildpackYAML(appRoot string) (BuildpackYAML, error) {
 		}
 	}
 	return buildpackYAML, nil
+}
+
+func WarnComposerBuildpackYAML(logger logger.Logger, version, appRoot string) error {
+	var (
+		exists bool
+		err    error
+	)
+	buildpackYAML, configFile := BuildpackYAML{}, filepath.Join(appRoot, "buildpack.yml")
+	if exists, err = helper.FileExists(configFile); err != nil {
+		return err
+	}
+	if !exists {
+		return nil
+	}
+	file, err := os.Open(configFile)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	contents, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+
+	err = yaml.Unmarshal(contents, &buildpackYAML)
+	if err != nil {
+		return err
+	}
+	fieldMapping := map[string]string{}
+	if buildpackYAML.Composer.Version != "" {
+		fieldMapping["composer.version"] = "BP_COMPOSER_VERSION"
+	}
+	if len(buildpackYAML.Composer.InstallOptions) > 0 {
+		fieldMapping["composer.install_options"] = "BP_COMPOSER_INSTALL_OPTIONS"
+	}
+	if buildpackYAML.Composer.VendorDirectory != "" {
+		fieldMapping["composer.vendor_directory"] = "COMPOSER_VENDOR_DIR"
+	}
+	if buildpackYAML.Composer.JsonPath != "" {
+		fieldMapping["composer.json_path"] = "COMPOSER"
+	}
+	if len(buildpackYAML.Composer.InstallGlobal) > 0 {
+		fieldMapping["composer.install_global"] = "BP_COMPOSER_GLOBAL_INSTALL_OPTIONS"
+	}
+
+	nextMajorVersion := semver.MustParse(version).IncMajor()
+	logger.BodyWarning("WARNING: Setting composer configurations through buildpack.yml will be deprecated soon in buildpack v%s.", nextMajorVersion.String())
+	logger.BodyWarning("Buildpack.yml values will be replaced by environment variables in the next major version:")
+
+	for field, envVar := range fieldMapping {
+		logger.BodyWarning("  %s -> %s", field, envVar)
+	}
+	return nil
 }

@@ -51,6 +51,11 @@ func NewContributor(context build.Build, composerPharPath string) (Contributor, 
 		return Contributor{}, false, err
 	}
 
+	err = composer.WarnComposerBuildpackYAML(context.Logger, context.Buildpack.Info.Version, context.Application.Root)
+	if err != nil {
+		return Contributor{}, false, err
+	}
+
 	path, err := composer.FindComposer(context.Application.Root, buildpackYAML.Composer.JsonPath)
 	if err != nil {
 		return Contributor{}, false, err
