@@ -5,9 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
+	bp "github.com/buildpack/libbuildpack/logger"
+	"github.com/cloudfoundry/libcfbuildpack/logger"
 	"github.com/cloudfoundry/libcfbuildpack/test"
-	"github.com/paketo-buildpacks/php-composer/runner"
 	. "github.com/onsi/gomega"
+	"github.com/paketo-buildpacks/php-composer/runner"
 	"github.com/sclevine/spec"
 	"github.com/sclevine/spec/report"
 )
@@ -148,6 +150,43 @@ func testComposer(t *testing.T, when spec.G, it spec.S) {
 			bpYaml, err := LoadComposerBuildpackYAML(factory.Build.Application.Root)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(bpYaml.Composer.InstallGlobal).To(ConsistOf("one", "two", "three"))
+		})
+
+		when("WarnComposerBuildpackYAML", func() {
+			when("there is a buildpack.yml", func() {
+				it("warns about using buildpack.yml and shows equivalent env vars", func() {
+					test.WriteFile(t, filepath.Join(factory.Build.Application.Root, "buildpack.yml"),
+						`{
+"composer": {
+	"version" : "some-version",
+	"install_options" : ["--opt", "--other-opt"],
+	"vendor_directory": "some-dir",
+	"json_path": "subdir",
+	"install_global" : ["--global", "--opt"]
+	}
+}`)
+
+					buf := bytes.NewBuffer(nil)
+					logger := logger.Logger{Logger: bp.NewLogger(buf, buf)}
+					Expect(WarnComposerBuildpackYAML(logger, "1.2.3", factory.Build.Application.Root)).To(Succeed())
+					Expect(buf.String()).To(ContainSubstring(`WARNING: Setting composer configurations through buildpack.yml will be deprecated soon in buildpack v2.0.0.`))
+					Expect(buf.String()).To(ContainSubstring("Buildpack.yml values will be replaced by environment variables in the next major version:"))
+					Expect(buf.String()).To(ContainSubstring("composer.version -> BP_COMPOSER_VERSION"))
+					Expect(buf.String()).To(ContainSubstring("composer.install_options -> BP_COMPOSER_INSTALL_OPTIONS"))
+					Expect(buf.String()).To(ContainSubstring("composer.vendor_directory -> COMPOSER_VENDOR_DIR"))
+					Expect(buf.String()).To(ContainSubstring("composer.json_path -> COMPOSER"))
+					Expect(buf.String()).To(ContainSubstring("composer.install_global -> BP_COMPOSER_GLOBAL_INSTALL_OPTIONS"))
+				})
+			})
+			when("there is no buildpack.yml", func() {
+				it("logs no warning", func() {
+					buf := bytes.NewBuffer(nil)
+					logger := logger.Logger{Logger: bp.NewLogger(buf, buf)}
+					Expect(WarnComposerBuildpackYAML(logger, "1.2.3", factory.Build.Application.Root)).To(Succeed())
+					Expect(buf.String()).NotTo(ContainSubstring("WARNING: Setting composer configurations through buildpack.yml will be deprecated soon in buildpack v2.0.0."))
+					Expect(buf.String()).NotTo(ContainSubstring("Buildpack.yml values will be replaced by environment variables in the next major version:"))
+				})
+			})
 		})
 	})
 

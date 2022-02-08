@@ -92,6 +92,11 @@ func testIntegrationComposerApp(t *testing.T, when spec.G, it spec.S) {
 		it("deploys using custom composer setting and installs a package using Composer", func() {
 			app, err = PreparePhpApp("composer_app_custom", buildpacks, false)
 			Expect(err).ToNot(HaveOccurred())
+			Expect(app.BuildLogs()).To(MatchRegexp(`WARNING: Setting composer configurations through buildpack.yml will be deprecated soon in buildpack v\d+.\d+.\d+.`))
+			Expect(app.BuildLogs()).To(ContainSubstring("Buildpack.yml values will be replaced by environment variables in the next major version:"))
+			Expect(app.BuildLogs()).To(ContainSubstring("composer.install_options -> BP_COMPOSER_INSTALL_OPTIONS"))
+			Expect(app.BuildLogs()).To(ContainSubstring("composer.vendor_directory -> COMPOSER_VENDOR_DIR"))
+			Expect(app.BuildLogs()).To(ContainSubstring("composer.json_path -> COMPOSER"))
 
 			err = app.Start()
 			if err != nil {
