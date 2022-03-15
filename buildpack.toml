@@ -14,16 +14,6 @@ api = "0.4"
 
   [[metadata.dependencies]]
     id = "composer"
-    purl = "pkg:generic/composer@2.2.7?checksum=10040ded663541990eef8ce1f6fa44cb3b4a47e145efb8e9e59907a15068033d&download_url=https://getcomposer.org/download/2.2.7/composer.phar"
-    sha256 = "10040ded663541990eef8ce1f6fa44cb3b4a47e145efb8e9e59907a15068033d"
-    source = "https://getcomposer.org/download/2.2.7/composer.phar"
-    source_sha256 = "10040ded663541990eef8ce1f6fa44cb3b4a47e145efb8e9e59907a15068033d"
-    stacks = ["io.buildpacks.stacks.bionic"]
-    uri = "https://deps.paketo.io/composer/composer_2.2.7_linux_noarch_any-stack_10040ded.phar"
-    version = "2.2.7"
-
-  [[metadata.dependencies]]
-    id = "composer"
     purl = "pkg:generic/composer@2.2.8?checksum=e1e1c580a237c739ecc1be57cf512e6b741faaa566439257d19ecd739ddfefaf&download_url=https://getcomposer.org/download/2.2.8/composer.phar"
     sha256 = "e1e1c580a237c739ecc1be57cf512e6b741faaa566439257d19ecd739ddfefaf"
     source = "https://getcomposer.org/download/2.2.8/composer.phar"
@@ -31,6 +21,16 @@ api = "0.4"
     stacks = ["io.buildpacks.stacks.bionic"]
     uri = "https://deps.paketo.io/composer/composer_2.2.8_linux_noarch_any-stack_e1e1c580.phar"
     version = "2.2.8"
+
+  [[metadata.dependencies]]
+    id = "composer"
+    purl = "pkg:generic/composer@2.2.9?checksum=48f9fdc9ad93904fee96550b45ae03a51f69718502ee855da894b4ad71d2dfe0&download_url=https://getcomposer.org/download/2.2.9/composer.phar"
+    sha256 = "48f9fdc9ad93904fee96550b45ae03a51f69718502ee855da894b4ad71d2dfe0"
+    source = "https://getcomposer.org/download/2.2.9/composer.phar"
+    source_sha256 = "48f9fdc9ad93904fee96550b45ae03a51f69718502ee855da894b4ad71d2dfe0"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/composer/composer_2.2.9_linux_noarch_any-stack_48f9fdc9.phar"
+    version = "2.2.9"
 
   [[metadata.dependency-constraints]]
     constraint = "*"
