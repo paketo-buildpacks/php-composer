@@ -13,6 +13,7 @@ api = "0.4"
     composer = "*"
 
   [[metadata.dependencies]]
+    cpe = "cpe:2.3:a:getcomposer:composer:2.3.4:*:*:*:*:*:*:*"
     id = "composer"
     purl = "pkg:generic/composer@2.3.4?checksum=1fc8fc5b43f081fe76fa85eb5a213412e55f54a60bae4880bc96521ae482d6c3&download_url=https://getcomposer.org/download/2.3.4/composer.phar"
     sha256 = "1fc8fc5b43f081fe76fa85eb5a213412e55f54a60bae4880bc96521ae482d6c3"
@@ -23,6 +24,7 @@ api = "0.4"
     version = "2.3.4"
 
   [[metadata.dependencies]]
+    cpe = "cpe:2.3:a:getcomposer:composer:2.3.5:*:*:*:*:*:*:*"
     id = "composer"
     purl = "pkg:generic/composer@2.3.5?checksum=3b3b5a899c06a46aec280727bdf50aad14334f6bc40436ea76b07b650870d8f4&download_url=https://getcomposer.org/download/2.3.5/composer.phar"
     sha256 = "3b3b5a899c06a46aec280727bdf50aad14334f6bc40436ea76b07b650870d8f4"
