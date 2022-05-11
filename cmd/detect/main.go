@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -84,7 +83,7 @@ func findPHPVersion(path string, logger logger.Logger) (string, string, error) {
 }
 
 func parseComposerJSON(path string) (string, string, error) {
-	buf, err := ioutil.ReadFile(path)
+	buf, err := os.ReadFile(path)
 	if err != nil {
 		return "", "", err
 	}
@@ -105,7 +104,7 @@ func parseComposerJSON(path string) (string, string, error) {
 }
 
 func parseComposerLock(path string) (string, string, error) {
-	buf, err := ioutil.ReadFile(path)
+	buf, err := os.ReadFile(path)
 	if err != nil {
 		return "", "", err
 	}

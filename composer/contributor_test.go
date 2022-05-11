@@ -2,7 +2,6 @@ package composer_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -11,8 +10,8 @@ import (
 	"github.com/sclevine/spec/report"
 
 	"github.com/cloudfoundry/libcfbuildpack/test"
-	"github.com/paketo-buildpacks/php-composer/composer"
 	. "github.com/onsi/gomega"
+	"github.com/paketo-buildpacks/php-composer/composer"
 	"github.com/sclevine/spec"
 )
 
@@ -66,7 +65,7 @@ func testContributor(t *testing.T, when spec.G, it spec.S) {
 			Expect(layer).To(test.HaveLayerMetadata(true, false, false))
 			Expect(filepath.Join(layer.Root, composer.ComposerPHAR)).To(BeARegularFile())
 			Expect(filepath.Join(layer.Root, "composer-php.ini")).To(BeARegularFile())
-			ini, err := ioutil.ReadFile(filepath.Join(layer.Root, "composer-php.ini"))
+			ini, err := os.ReadFile(filepath.Join(layer.Root, "composer-php.ini"))
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(ini)).To(ContainSubstring(fmt.Sprintf("no-debug-non-zts-%s", version)))
