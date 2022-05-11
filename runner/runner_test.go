@@ -2,9 +2,10 @@ package runner
 
 import (
 	"bytes"
+	"testing"
+
 	"github.com/cloudfoundry/libcfbuildpack/test"
 	"github.com/sclevine/spec/report"
-	"testing"
 
 	. "github.com/onsi/gomega"
 	"github.com/sclevine/spec"
@@ -28,8 +29,8 @@ func testRunner(t *testing.T, when spec.G, it spec.S) {
 			stderr := bytes.Buffer{}
 
 			runner := ComposerRunner{
-				Out: &stdout,
-				Err: &stderr,
+				Out:    &stdout,
+				Err:    &stderr,
 				Logger: f.Build.Logger,
 			}
 
@@ -55,7 +56,7 @@ func testRunner(t *testing.T, when spec.G, it spec.S) {
 			stderr := bytes.Buffer{}
 
 			runner := ComposerRunner{
-				Err: &stderr,
+				Err:    &stderr,
 				Logger: f.Build.Logger,
 			}
 

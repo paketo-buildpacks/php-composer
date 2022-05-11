@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"io/ioutil"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -67,7 +66,7 @@ func NewContributor(context build.Build, composerPharPath string) (Contributor, 
 	if exists, err := helper.FileExists(lockPath); err != nil {
 		return Contributor{}, false, err
 	} else if exists {
-		buf, err := ioutil.ReadFile(lockPath)
+		buf, err := os.ReadFile(lockPath)
 		if err != nil {
 			return Contributor{}, false, err
 		}

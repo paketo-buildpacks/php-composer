@@ -2,7 +2,7 @@ package composer
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -158,7 +158,7 @@ func LoadComposerBuildpackYAML(appRoot string) (BuildpackYAML, error) {
 		}
 		defer file.Close()
 
-		contents, err := ioutil.ReadAll(file)
+		contents, err := io.ReadAll(file)
 		if err != nil {
 			return BuildpackYAML{}, err
 		}
@@ -189,7 +189,7 @@ func WarnComposerBuildpackYAML(logger logger.Logger, version, appRoot string) er
 	}
 	defer file.Close()
 
-	contents, err := ioutil.ReadAll(file)
+	contents, err := io.ReadAll(file)
 	if err != nil {
 		return err
 	}

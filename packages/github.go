@@ -3,14 +3,14 @@ package packages
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 )
 
 const (
 	githubTimeout = 5
-	githubURL = "https://api.github.com/rate_limit"
+	githubURL     = "https://api.github.com/rate_limit"
 )
 
 type Github struct {
@@ -18,7 +18,7 @@ type Github struct {
 	body  []byte
 }
 
-func NewDefaultGithub(token string) (Github, error){
+func NewDefaultGithub(token string) (Github, error) {
 	return NewGithub(token, githubURL)
 }
 
@@ -51,7 +51,7 @@ func (g *Github) makeRequest(url string) error {
 	}
 	defer resp.Body.Close()
 
-	g.body, err = ioutil.ReadAll(resp.Body)
+	g.body, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}

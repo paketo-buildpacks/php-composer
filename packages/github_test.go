@@ -21,7 +21,7 @@ func testGithub(t *testing.T, when spec.G, it spec.S) {
 	})
 
 	when("a github oauth token is supplied", func() {
-		it("validates the github token successfully when the token is correct", func(){
+		it("validates the github token successfully when the token is correct", func() {
 			response := `{
 				"resources": {
 					"core": {
@@ -69,7 +69,7 @@ func testGithub(t *testing.T, when spec.G, it spec.S) {
 			Expect(limitOk).To(BeTrue())
 		})
 
-		it("validates the github token successfully when the token is correct and returns false if rate limit is met", func(){
+		it("validates the github token successfully when the token is correct and returns false if rate limit is met", func() {
 			response := `{
 				"resources": {
 					"core": {
@@ -117,7 +117,7 @@ func testGithub(t *testing.T, when spec.G, it spec.S) {
 			Expect(limitOk).To(BeFalse())
 		})
 
-		it("validates the github token successfully when the token is NOT correct", func(){
+		it("validates the github token successfully when the token is NOT correct", func() {
 			response := `{
 				"message": "Bad credentials",
 				"documentation_url": "https://developer.github.com/v3"

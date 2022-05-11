@@ -2,8 +2,8 @@ package packages
 
 import (
 	"bytes"
-	"io/ioutil"
 	"math/rand"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -113,7 +113,7 @@ func testComposerPackage(t *testing.T, when spec.G, it spec.S) {
 			Expect(contributor.enablePHPExtensions([]string{"abcdefg", "qwerty"})).To(Succeed())
 			Expect(composer_exts).To(BeARegularFile())
 
-			contents, err := ioutil.ReadFile(composer_exts)
+			contents, err := os.ReadFile(composer_exts)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(string(contents)).To(ContainSubstring("extension = qwerty.so\n"))
 			Expect(string(contents)).To(ContainSubstring("extension = abcdefg.so\n"))
